@@ -25,7 +25,6 @@ public sealed partial class BlankPage1 : Page
     private readonly int _scrollBufferSize = 10;
     private ScrollViewer? _scrollViewer;
 
-    // private readonly DispatcherTimer _dispatcherTimer;
     private readonly Timer _timer;
 
     public BlankPage1()
@@ -99,42 +98,19 @@ public sealed partial class BlankPage1 : Page
                 evt.WaitOne();
             }
         });
-        _timer.Change(TimeSpan.Zero, TimeSpan.FromSeconds(1));
-        // _dispatcherTimer.Tick += DispatcherTimer_Tick;
-        // _dispatcherTimer.Start();
-    }
-
-    private void DispatcherTimer_Tick(object? sender, object e)
-    {
-
-        foreach (IntegerGroup group in this.IntegerGroups)
-        {
-            if (Random.NextDouble() > 0.75)
-            {
-                if (Random.NextDouble() > 0.5)
-                {
-                    group.Collection.Add(new Integer(group.Collection[group.Collection.Count - 1].Value + 1));
-                }
-                else if (group.Collection.Count > 2)
-                {
-                    group.Collection.RemoveAt(group.Collection.Count - 1);
-                }
-            }
-        }
+        // _timer.Change(TimeSpan.Zero, TimeSpan.FromSeconds(1));
     }
 
     private void GroupsList_LayoutUpdated(object? sender, object e)
     {
         GroupsList.LayoutUpdated -= GroupsList_LayoutUpdated;
         _scrollViewer = GetFirstChildOfType<ScrollViewer>(GroupsList) ?? throw new InvalidOperationException();
-        GroupsList.LayoutUpdated += GroupsList_LayoutUpdated2;
-        _scrollViewer.ViewChanging += ScrollViewer_ViewChanging;
+        _scrollViewer.LayoutUpdated += ScrollViewer_LayoutUpdated;
         _scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
     }
 
-    private void GroupsList_LayoutUpdated2(object? sender, object e) => UpdateScrollViewer();
+    private void ScrollViewer_LayoutUpdated(object? sender, object e) => UpdateScrollViewer();
 
-    private void ScrollViewer_ViewChanging(object? sender, ScrollViewerViewChangingEventArgs e) => UpdateScrollViewer();
 
     private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
@@ -238,48 +214,6 @@ public sealed partial class BlankPage1 : Page
                 IntegerGroups.RemoveAt(0);
             }
         }
-
-        // int firstVisibleGroupIdx = int.MaxValue;
-        // for (int i = 0; i < _scrollBufferSize; ++i)
-        // {
-        //     IntegerGroup group = IntegerGroups[i];
-        //     if (GroupsList.ContainerFromItem(group.Collection[0]) is FrameworkElement elt && elt.IsLoaded)
-        //     {
-        //         firstVisibleGroupIdx = i;
-        //         break;
-        //     }
-        // }
-        // 
-        // int lastVisibleGroupIdx = 0;
-        // for (int i = 0; i < _scrollBufferSize; ++i)
-        // {
-        //     int idx = IntegerGroups.Count - 1 - i;
-        //     IntegerGroup group = IntegerGroups[idx];
-        //     if (GroupsList.ContainerFromItem(group.Collection[group.Collection.Count - 1]) is FrameworkElement elt && elt.IsLoaded)
-        //     {
-        //         lastVisibleGroupIdx = idx;
-        //         break;
-        //     }
-        // }
-        // 
-        // if (firstVisibleGroupIdx < _scrollBufferSize)
-        // {
-        //     // We scrolled past the top elt
-        //     for (int i = 0; i < _scrollBufferSize; ++i)
-        //     {
-        //         IntegerGroups.Insert(0, MakeGroup(IntegerGroups[0].GroupNumber - 1));
-        //         IntegerGroups.RemoveAt(IntegerGroups.Count - 1);
-        //     }
-        // }
-        // else if (lastVisibleGroupIdx >= IntegerGroups.Count - 1 - _scrollBufferSize)
-        // {
-        //     // We scrolled past the bottom elt
-        //     for (int i = 0; i < _scrollBufferSize; ++i)
-        //     {
-        //         IntegerGroups.Add(MakeGroup(IntegerGroups[IntegerGroups.Count - 1].GroupNumber + 1));
-        //         IntegerGroups.RemoveAt(0);
-        //     }
-        // }
     }
 
     public static T? GetFirstChildOfType<T>(DependencyObject dependencyObject) where T : DependencyObject
@@ -323,16 +257,6 @@ public sealed partial class BlankPage1 : Page
     {
         Debug.WriteLine($"Scrolling to group '{groupKey}'");
 
-        // IntegerGroup firstGroup = IntegerGroups[0];
-        // IntegerGroup lastGroup = IntegerGroups[IntegerGroups.Count - 1];
-        // 
-        // if (groupKey < firstGroup.WhateverIWant)
-        // {
-        //     
-        //     for (int i = firstGroup.WhateverIWant; i >= groupKey; --i)
-        //     {
-        //     }
-        // }
         IntegerGroup? group = IntegerGroups.FirstOrDefault(ig => ig.GroupNumber == groupKey);
 
         if (group is null)
