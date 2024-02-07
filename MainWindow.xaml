@@ -5,6 +5,7 @@
     <NavigationView SelectionChanged="NavigationView_SelectionChanged">
         <NavigationView.MenuItems>
             <NavigationViewItem Content="Window Test" Tag="WindowTest" />
+            <NavigationViewItem Content="Viewport Test" Tag="ViewportTest" />
         </NavigationView.MenuItems>
         <Frame x:Name="ContentFrame" />
     </NavigationView>

@@ -1,0 +1,56 @@
+<Page
+    x:Class="App1.Pages.ViewportTest"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="STATE_Normal">
+                    <VisualState.Setters>
+                        <Setter Target="PART_OcclusionStatus.Text" Value="Normal" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="STATE_Occluded">
+                    <VisualState.Setters>
+                        <Setter Target="PART_OcclusionStatus.Text" Value="Occluded" />
+                        <Setter Target="PART_InfoGrid.Background" Value="{ThemeResource SystemFillColorCriticalBackgroundBrush}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid
+            x:Name="PART_InfoGrid"
+            Grid.Row="0"
+            RowSpacing="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" FontSize="16" FontWeight="SemiBold">This test checks for the green rectangle to be occluded.</TextBlock>
+            <TextBlock Grid.Row="1"><Run>Current status:</Run> <Run x:Name="PART_OcclusionStatus" Text="Unknown" /></TextBlock>
+            <TextBlock Grid.Row="2"><Run>EffectiveViewport: </Run><Run x:Name="EffectiveViewportRun"/></TextBlock>
+            <TextBlock Grid.Row="3"><Run>MaxViewport: </Run><Run x:Name="MaxViewportRun"/></TextBlock>
+            <TextBlock Grid.Row="4"><Run>BringIntoViewDistanceX: </Run><Run x:Name="BringIntoViewDistanceXRun"/></TextBlock>
+            <TextBlock Grid.Row="5"><Run>BringIntoViewDistanceY: </Run><Run x:Name="BringIntoViewDistanceYRun"/></TextBlock>
+        </Grid>
+        <ScrollView Grid.Row="1">
+            <StackPanel Orientation="Vertical">
+                <Rectangle Width="200" Height="200" Fill="IndianRed" />
+                <Rectangle Width="200" Height="200" Fill="Black" />
+                <Rectangle Width="600" Height="200" Fill="ForestGreen" EffectiveViewportChanged="Rectangle_EffectiveViewportChanged" Stroke="Magenta" StrokeThickness="5" />
+                <Rectangle Width="200" Height="200" Fill="Red" />
+                <Rectangle Width="200" Height="200" Fill="Khaki" />
+                <Rectangle Width="200" Height="200" Fill="Aquamarine" />
+            </StackPanel>
+        </ScrollView>
+    </Grid>
+</Page>
