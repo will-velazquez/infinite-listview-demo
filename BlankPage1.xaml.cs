@@ -98,7 +98,7 @@ public sealed partial class BlankPage1 : Page
                 evt.WaitOne();
             }
         });
-        // _timer.Change(TimeSpan.Zero, TimeSpan.FromSeconds(1));
+        _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(1000));
     }
 
     private void GroupsList_LayoutUpdated(object? sender, object e)
@@ -110,7 +110,6 @@ public sealed partial class BlankPage1 : Page
     }
 
     private void ScrollViewer_LayoutUpdated(object? sender, object e) => UpdateScrollViewer();
-
 
     private void ScrollViewer_ViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
@@ -141,7 +140,7 @@ public sealed partial class BlankPage1 : Page
             IntegerGroup group = IntegerGroups[_scrollBufferSize - 1 - i];
             for (int j = 0; j < group.Collection.Count; ++j)
             {
-                if (GroupsList.ContainerFromItem(group.Collection[group.Collection.Count - 1 - j]) is FrameworkElement elt)
+                if (GroupsList.ContainerFromItem(group.Collection[group.Collection.Count - 1 - j]) is FrameworkElement elt && elt.IsLoaded)
                 {
                     topElement = elt;
                     break;

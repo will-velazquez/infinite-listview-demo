@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Icons/16pt/Warning</title>
+    <g id="Icons/16pt/Warning" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M6.53387335,13.9240544 C7.34354269,15.3634665 8.66170087,15.3538225 9.46594542,13.9240544 L15.5338733,3.13662694 C16.3435427,1.69721477 15.6469838,0.530340652 14.0073696,0.530340652 L1.99244914,0.530340652 C0.339715069,0.530340652 -0.338299129,1.70685885 0.465945419,3.13662694 L6.53387335,13.9240544 Z" id="Oval-107" fill="#E62222" fill-rule="nonzero" transform="translate(7.999955, 7.765170) rotate(-180.000000) translate(-7.999955, -7.765170) "></path>
+        <rect id="Rectangle-319" fill="#FFFFFF" fill-rule="nonzero" x="7" y="5" width="2" height="5" rx="1"></rect>
+        <circle id="Oval-115" fill="#FFFFFF" fill-rule="nonzero" cx="8" cy="12" r="1"></circle>
+    </g>
+</svg>

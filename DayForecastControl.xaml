@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="App1.DayForecastControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:App1">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Center"
+            Orientation="Vertical">
+            <TextBlock
+                HorizontalAlignment="Center"
+                Text="{x:Bind GetDayNameString(DayForecast.Date), Mode=OneWay}" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="12"
+                Text="{x:Bind GetDateString(DayForecast.Date), Mode=OneWay}" />
+            <Image
+                Margin="0,3,0,3"
+                HorizontalAlignment="Center"
+                Height="32"
+                Source="/Assets/Weather/rain-light.svg.png" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                TextLineBounds="TrimToBaseline" >
+                <Run Text="{x:Bind DayForecast.HighTemperature}" /><Run Text="&#x00B0;" />
+            </TextBlock>
+            <TextBlock
+                HorizontalAlignment="Center"
+                Foreground="Gray">
+                <Run Text="{x:Bind DayForecast.LowTemperature}" /><Run Text="&#x00B0;" />
+            </TextBlock>
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Margin="1,0,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom">
+            <Image
+                HorizontalAlignment="Center"
+                Height="15"
+                Margin="0,16,0,5"
+                Source="/Assets/Weather/sunrise.svg.png" />
+            <TextBlock
+                FontSize="11"
+                HorizontalAlignment="Center"
+                Text="{x:Bind GetSunriseString(DayForecast.Sunrise), Mode=OneWay}" />
+            <TextBlock
+                FontSize="10"
+                HorizontalAlignment="Center"
+                Foreground="{x:Bind SunsetBrush, Mode=OneWay}"
+                Text="{x:Bind GetSunsetString(DayForecast.Sunrise, DayForecast.DayLength), Mode=OneWay}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

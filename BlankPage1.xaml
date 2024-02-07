@@ -28,6 +28,9 @@
     <ListView
       Grid.Row="1"
       x:Name="GroupsList">
+      <ListView.Header>
+        <TextBlock Text="Hello?" />
+      </ListView.Header>
       <ListView.ItemsPanel>
         <ItemsPanelTemplate>
           <ItemsStackPanel
