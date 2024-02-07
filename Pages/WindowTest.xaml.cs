@@ -1,11 +1,7 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using System;
-using WinRT.Interop;
-
-#nullable enable
 
 namespace App1.Pages;
 
@@ -19,8 +15,6 @@ public sealed partial class WindowTest : Page
 	private void Button1_Click(object sender, RoutedEventArgs e)
 	{
 		RadioButton rb = (RadioButton)Button1_RadioButtons.SelectedItem;
-		AppWindow? appWindow = AppWindow.GetFromWindowId(this.XamlRoot.ContentIslandEnvironment.AppWindowId);
-		// IntPtr hwnd = WindowNative.GetWindowHandle(appWindow);
 		OverlappedPresenter presenter = rb.Tag switch
 		{
 			"Create" => OverlappedPresenter.Create(),

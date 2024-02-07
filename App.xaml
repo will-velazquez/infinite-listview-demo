@@ -1,47 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Application
     x:Class="App1.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:App1">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
-            <x:Double x:Key="CheckBoxSize">50</x:Double>
-            <Style TargetType="local:MyCheckbox">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="local:MyCheckbox">
-                            <Grid x:Name="PART_RootGrid">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualState x:Name="Normal" />
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Target="PART_RootGrid.Opacity" Value="0.4" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                                <StackPanel
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <Border
-                                        Width="40"
-                                        Height="40"
-                                        BorderBrush="Black"
-                                        BorderThickness="1"
-                                        Background="Cyan">
-                                    </Border>
-                                    <TextBlock VerticalAlignment="Center" Text="Hello, world!" />
-                                </StackPanel>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
