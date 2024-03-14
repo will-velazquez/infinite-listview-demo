@@ -5,20 +5,6 @@ namespace App1.Pages;
 
 internal sealed partial class FlyoutTest : Page
 {
-	public readonly static DependencyProperty HeaderProperty = DependencyProperty.Register(
-		nameof(Header),
-		typeof(UIElement),
-		typeof(_BlankPage),
-		new PropertyMetadata(null, (DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs) =>
-		{
-		}));
-
-	public UIElement Header
-	{
-		get => (UIElement)this.GetValue(HeaderProperty);
-		set => this.SetValue(HeaderProperty, value);
-	}
-
 	public FlyoutTest()
     {
         this.InitializeComponent();

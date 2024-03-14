@@ -19,6 +19,10 @@ internal sealed partial class ViewportTest : Page
 		this.BringIntoViewDistanceXRun.Text = args.BringIntoViewDistanceX.ToString();
 		this.BringIntoViewDistanceYRun.Text = args.BringIntoViewDistanceY.ToString();
 
+		if (args.EffectiveViewport.IsEmpty)
+		{
+		}
+
 		if (args.BringIntoViewDistanceX != 0
 			|| args.BringIntoViewDistanceY != 0
 			|| args.EffectiveViewport.Width < sender.ActualWidth

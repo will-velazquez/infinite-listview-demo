@@ -43,14 +43,14 @@
             <TextBlock Grid.Row="5"><Run>BringIntoViewDistanceY: </Run><Run x:Name="BringIntoViewDistanceYRun"/></TextBlock>
         </Grid>
         <ScrollView Grid.Row="1">
-            <StackPanel Orientation="Vertical">
-                <Rectangle Width="200" Height="200" Fill="IndianRed" />
-                <Rectangle Width="200" Height="200" Fill="Black" />
-                <Rectangle Width="600" Height="200" Fill="ForestGreen" EffectiveViewportChanged="Rectangle_EffectiveViewportChanged" Stroke="Magenta" StrokeThickness="5" />
-                <Rectangle Width="200" Height="200" Fill="Red" />
-                <Rectangle Width="200" Height="200" Fill="Khaki" />
-                <Rectangle Width="200" Height="200" Fill="Aquamarine" />
-            </StackPanel>
+            <Canvas>
+                <Rectangle Canvas.Top="0" Width="200" Height="200" Fill="IndianRed" />
+                <Rectangle Canvas.Top="200" Width="200" Height="200" Fill="Black" />
+                <Rectangle Canvas.Top="400" Width="600" Height="200" Fill="ForestGreen" EffectiveViewportChanged="Rectangle_EffectiveViewportChanged" Stroke="Magenta" StrokeThickness="5" />
+                <Rectangle Canvas.Top="600" Width="200" Height="200" Fill="Red" />
+                <Rectangle Canvas.Top="800" Width="200" Height="200" Fill="Khaki" />
+                <Rectangle Canvas.Top="1000" Width="200" Height="200" Fill="Aquamarine" />
+            </Canvas>
         </ScrollView>
     </Grid>
 </Page>
