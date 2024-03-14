@@ -148,6 +148,20 @@ internal sealed partial class AvailabilityGrid : UserControl
 		}
 	}
 
+	public readonly static DependencyProperty UsesFixedHourWidthProperty = DependencyProperty.Register(
+		nameof(UsesFixedHourWidth),
+		typeof(bool),
+		typeof(AvailabilityGrid),
+		new PropertyMetadata(default(bool), (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+		{
+		}));
+
+	public bool UsesFixedHourWidth
+	{
+		get => (bool)this.GetValue(UsesFixedHourWidthProperty);
+		set => this.SetValue(UsesFixedHourWidthProperty, value);
+	}
+
 	private readonly static DependencyProperty ViewModelProperty = DependencyProperty.Register(
 		nameof(ViewModel),
 		typeof(FreeBusyViewModel),
@@ -170,6 +184,19 @@ internal sealed partial class AvailabilityGrid : UserControl
 	private readonly Rectangle _organizerEventRectangle;
 	private readonly Rectangle _attendeesEventRectangle;
 	private readonly List<FrameworkElement> _availabilityBlocks = new List<FrameworkElement>();
+
+	private readonly Color _lightLabelTextColorLight = Color.FromArgb(
+		(byte)Math.Clamp(Math.Truncate(1.0 * 255), 0, 255),
+		(byte)Math.Clamp(Math.Truncate(0.494 * 255), 0, 255),
+		(byte)Math.Clamp(Math.Truncate(0.498 * 255), 0, 255),
+		(byte)Math.Clamp(Math.Truncate(0.502 * 255), 0, 255));
+
+	private readonly Color _lightLabelTextColorDark = Color.FromArgb(
+		(byte)Math.Clamp(Math.Truncate(1.0 * 255), 0, 255),
+		(byte)Math.Clamp(Math.Truncate(0.694 * 255), 0, 255),
+		(byte)Math.Clamp(Math.Truncate(0.694 * 255), 0, 255),
+		(byte)Math.Clamp(Math.Truncate(0.702 * 255), 0, 255));
+
 
 	public AvailabilityGrid()
 	{
@@ -198,6 +225,18 @@ internal sealed partial class AvailabilityGrid : UserControl
 		this.SyncEventColor();
 		this.SyncAvailabilityBlockPositions();
 	}
+
+	private GridLength GetHoursGridWidth(bool usesFixedHourWidth) => new GridLength(1, usesFixedHourWidth ? GridUnitType.Auto : GridUnitType.Star);
+
+	private Brush GetUnavailableBrush()
+	{
+		Color color = this.ActualTheme == ElementTheme.Dark ? this._lightLabelTextColorLight : this._lightLabelTextColorDark;
+		Color colorWithAlpha = Color.FromArgb((byte)(0.7 * 255), color.R, color.G, color.B);
+
+		return MakeStripePatternBrush(colorWithAlpha);
+	}
+
+	private Brush GetNotFoundBrush() => MakeStripePatternBrush(Color.FromArgb(0x66, 0xFF, 0xAA, 0x33));
 
 	private Brush MakeStripePatternBrush(Color stripeColor)
 	{
@@ -265,32 +304,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 		return brush;
 	}
 
-	private readonly Color _lightLabelTextColorLight = Color.FromArgb(
-		(byte)Math.Clamp(Math.Truncate(1.0 * 255), 0, 255),
-		(byte)Math.Clamp(Math.Truncate(0.494 * 255), 0, 255),
-		(byte)Math.Clamp(Math.Truncate(0.498 * 255), 0, 255),
-		(byte)Math.Clamp(Math.Truncate(0.502 * 255), 0, 255));
-
-	private readonly Color _lightLabelTextColorDark = Color.FromArgb(
-		(byte)Math.Clamp(Math.Truncate(1.0 * 255), 0, 255),
-		(byte)Math.Clamp(Math.Truncate(0.694 * 255), 0, 255),
-		(byte)Math.Clamp(Math.Truncate(0.694 * 255), 0, 255),
-		(byte)Math.Clamp(Math.Truncate(0.702 * 255), 0, 255));
-
-	private Brush GetUnavailableBrush()
-	{
-		Color color = this.ActualTheme == ElementTheme.Dark ? this._lightLabelTextColorLight : this._lightLabelTextColorDark;
-		Color colorWithAlpha = Color.FromArgb((byte)(0.7 * 255), color.R, color.G, color.B);
-
-		return MakeStripePatternBrush(colorWithAlpha);
-	}
-
-	private Brush GetNotFoundBrush()
-	{
-		return MakeStripePatternBrush(Color.FromArgb(0x66, 0xFF, 0xAA, 0x33));
-	}
-
-	private (double Start, double Width) GetTimesSpan(DateTime startDate, DateTime endDate)
+	private (double Start, double Width) CalcTimeStartWidth(DateTime startDate, DateTime endDate)
 	{
 		DateOnly date = DateOnly.FromDayNumber(this.Date);
 
@@ -344,7 +358,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 		double xOffset = columnWidth / 2;
 		double rowHeight = this.PART_AvailabilityCanvas.ActualHeight / this.ViewModel.FreeBusyAttendees.Count;
 
-		(double xPosOfEvent, double widthOfEvent) = this.GetTimesSpan(this.EventStartDate, this.EventEndDate);
+		(double xPosOfEvent, double widthOfEvent) = this.CalcTimeStartWidth(this.EventStartDate, this.EventEndDate);
 
 		foreach (FrameworkElement availabilityBlock in _availabilityBlocks)
 		{
@@ -362,7 +376,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 				int row = this.ViewModel.FreeBusyAttendees.Select((fba, i) => new { fba, i }).Where(s => s.fba.FreeBusyItems.Any(fbi => object.ReferenceEquals(fbi, freeBusyItem))).Select(s => s.i).First();
 
 				yPos = row * rowHeight + 1;
-				height = rowHeight - 1;
+				height = Math.Max(0, rowHeight - 1);
 
 				rectangleGeometry = ((availabilityBlock as Border)?.Child?.Clip);
 			}
@@ -378,7 +392,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 				throw new InvalidOperationException();
 			}
 
-			(double xPos, double width) = this.GetTimesSpan(startDate, endDate);
+			(double xPos, double width) = this.CalcTimeStartWidth(startDate, endDate);
 
 			Canvas.SetLeft(availabilityBlock, xPos);
 			availabilityBlock.Width = width;
