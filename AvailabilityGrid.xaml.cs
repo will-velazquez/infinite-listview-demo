@@ -97,6 +97,34 @@ internal sealed partial class AvailabilityGrid : UserControl
 		set => this.SetValue(DateProperty, value);
 	}
 
+	public readonly static DependencyProperty StartHourProperty = DependencyProperty.Register(
+		nameof(StartHour),
+		typeof(int),
+		typeof(AvailabilityGrid),
+		new PropertyMetadata(0, (DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) =>
+		{
+		}));
+
+	public int StartHour
+	{
+		get => (int)this.GetValue(StartHourProperty);
+		set => this.SetValue(StartHourProperty, value);
+	}
+
+	public readonly static DependencyProperty EndHourProperty = DependencyProperty.Register(
+		nameof(EndHour),
+		typeof(int),
+		typeof(AvailabilityGrid),
+		new PropertyMetadata(24, (DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) =>
+		{
+		}));
+
+	public int EndHour
+	{
+		get => (int)this.GetValue(EndHourProperty);
+		set => this.SetValue(EndHourProperty, value);
+	}
+
 	public readonly static DependencyProperty EventStartDateProperty = DependencyProperty.Register(
 		nameof(EventStartDate),
 		typeof(DateTime),
@@ -154,6 +182,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 		typeof(AvailabilityGrid),
 		new PropertyMetadata(default(bool), (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 		{
+			((AvailabilityGrid)d).UpdatedUsesFixedHourWidth();
 		}));
 
 	public bool UsesFixedHourWidth
@@ -224,9 +253,34 @@ internal sealed partial class AvailabilityGrid : UserControl
 
 		this.SyncEventColor();
 		this.SyncAvailabilityBlockPositions();
+
+		this.UpdatedUsesFixedHourWidth();
 	}
 
-	private GridLength GetHoursGridWidth(bool usesFixedHourWidth) => new GridLength(1, usesFixedHourWidth ? GridUnitType.Auto : GridUnitType.Star);
+	private double GetFlexibleHourGridWidth(double viewportWidth)
+	{
+		return viewportWidth;
+	}
+
+	private double GetFixedHourGridWidth(int startHour, int endHour)
+	{
+		int numHours = Math.Max(5, endHour - startHour);
+		double hourWidth = 25;
+
+		return hourWidth * numHours;
+	}
+
+	private double GetHourGridWidth(bool usesFixedHourWidth, int startHour, int endHour, double viewportWidth)
+	{
+		if (usesFixedHourWidth)
+		{
+			return GetFixedHourGridWidth(startHour, endHour);
+		}
+		else
+		{
+			return GetFlexibleHourGridWidth(viewportWidth);
+		}
+	}
 
 	private Brush GetUnavailableBrush()
 	{
@@ -237,6 +291,10 @@ internal sealed partial class AvailabilityGrid : UserControl
 	}
 
 	private Brush GetNotFoundBrush() => MakeStripePatternBrush(Color.FromArgb(0x66, 0xFF, 0xAA, 0x33));
+
+	private void UpdatedUsesFixedHourWidth()
+	{
+	}
 
 	private Brush MakeStripePatternBrush(Color stripeColor)
 	{
@@ -549,11 +607,14 @@ internal sealed partial class AvailabilityGrid : UserControl
 	private void PART_AvailabilityCanvas_SizeChanged(object? sender, SizeChangedEventArgs e)
 	{
 		this.SyncAvailabilityBlockPositions();
+
+		this.PART_AvailabilityTimeVerticalLinesLayout.MinItemHeight = e.NewSize.Height;
 	}
+
 
 	private void PART_AttendeeNames_SizeChanged(object? sender, SizeChangedEventArgs e)
 	{
-		this.PART_HourGridContainer.Margin = new Thickness(e.NewSize.Width, 0, 0, 0);
+		this.PART_HourGridContainer.Padding = new Thickness(e.NewSize.Width, 0, 0, 0);
 		this.PART_AvailabilityCanvasRow.Height = new GridLength(e.NewSize.Height, GridUnitType.Pixel);
 	}
 }

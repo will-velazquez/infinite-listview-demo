@@ -9,7 +9,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <app1:AvailabilityGrid x:Name="PART_AvailabilityGrid" Grid.Row="0" UsesFixedHourWidth="False"/>
+        <app1:AvailabilityGrid x:Name="PART_AvailabilityGrid" Grid.Row="0" UsesFixedHourWidth="False" />
 
         <Grid Grid.Row="1" ColumnSpacing="7" BorderThickness="0,2,0,0" BorderBrush="DarkGray" Padding="0,21,0,0">
             <Grid.ColumnDefinitions>
