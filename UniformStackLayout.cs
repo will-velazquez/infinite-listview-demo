@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.Foundation;
@@ -120,7 +120,7 @@ class UniformStackLayout : NonVirtualizingLayout
 		}
 		else if (this.Orientation == Orientation.Vertical)
 		{
-			double rowHeight = (finalSize.Height - padding.Top - padding.Bottom)  / context.Children.Count;
+			double rowHeight = (finalSize.Height - padding.Top - padding.Bottom) / context.Children.Count;
 			double rowWidth = finalSize.Width - paddingWidth;
 			double top = padding.Top;
 			double left = padding.Left;
