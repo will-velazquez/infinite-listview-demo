@@ -188,6 +188,18 @@ internal sealed partial class AvailabilityGrid : UserControl
 		set => this.SetValue(UsesFixedHourWidthProperty, value);
 	}
 
+	public readonly static DependencyProperty FixedHourWidthProperty = DependencyProperty.Register(
+		nameof(FixedHourWidth),
+		typeof(double),
+		typeof(AvailabilityGrid),
+		new PropertyMetadata((double)50));
+
+	public double FixedHourWidth
+	{
+		get => (double)this.GetValue(FixedHourWidthProperty);
+		set => this.SetValue(FixedHourWidthProperty, value);
+	}
+
 	private readonly static DependencyProperty ViewModelProperty = DependencyProperty.Register(
 		nameof(ViewModel),
 		typeof(FreeBusyViewModel),
@@ -252,28 +264,17 @@ internal sealed partial class AvailabilityGrid : UserControl
 		this.SyncAvailabilityBlockPositions();
 	}
 
-	private double GetFlexibleHourGridWidth(double viewportWidth)
-	{
-		return viewportWidth;
-	}
-
-	private double GetFixedHourGridWidth(int startHour, int endHour)
-	{
-		int numHours = Math.Max(5, endHour - startHour);
-		double hourWidth = 25;
-
-		return hourWidth * numHours;
-	}
-
-	private double GetHourGridWidth(bool usesFixedHourWidth, int startHour, int endHour, double viewportWidth)
+	private double GetHourGridWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth)
 	{
 		if (usesFixedHourWidth)
 		{
-			return GetFixedHourGridWidth(startHour, endHour);
+			int numHours = Math.Max(5, endHour - startHour);
+
+			return fixedHourWidth * numHours;
 		}
 		else
 		{
-			return GetFlexibleHourGridWidth(viewportWidth);
+			return viewportWidth;
 		}
 	}
 
