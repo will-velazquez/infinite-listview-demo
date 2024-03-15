@@ -180,10 +180,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 		nameof(UsesFixedHourWidth),
 		typeof(bool),
 		typeof(AvailabilityGrid),
-		new PropertyMetadata(default(bool), (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
-		{
-			((AvailabilityGrid)d).UpdatedUsesFixedHourWidth();
-		}));
+		new PropertyMetadata(default(bool)));
 
 	public bool UsesFixedHourWidth
 	{
@@ -253,8 +250,6 @@ internal sealed partial class AvailabilityGrid : UserControl
 
 		this.SyncEventColor();
 		this.SyncAvailabilityBlockPositions();
-
-		this.UpdatedUsesFixedHourWidth();
 	}
 
 	private double GetFlexibleHourGridWidth(double viewportWidth)
@@ -291,10 +286,6 @@ internal sealed partial class AvailabilityGrid : UserControl
 	}
 
 	private Brush GetNotFoundBrush() => MakeStripePatternBrush(Color.FromArgb(0x66, 0xFF, 0xAA, 0x33));
-
-	private void UpdatedUsesFixedHourWidth()
-	{
-	}
 
 	private Brush MakeStripePatternBrush(Color stripeColor)
 	{
@@ -391,6 +382,12 @@ internal sealed partial class AvailabilityGrid : UserControl
 		double xPos = xOffset + (startTime.Hour + (startTime.Minute / 60.0)) * columnWidth;
 		double width = ((duration.Hours + (duration.Minutes / 60.0)) * columnWidth);
 
+		if (this.UseLayoutRounding)
+		{
+			xPos = Math.Round(xPos);
+			width = Math.Round(width);
+		}
+
 		return (xPos, width);
 	}
 
@@ -412,8 +409,6 @@ internal sealed partial class AvailabilityGrid : UserControl
 	private void SyncAvailabilityBlockPositions()
 	{
 		DateOnly date = DateOnly.FromDayNumber(this.Date);
-		double columnWidth = (this.PART_AvailabilityCanvas.ActualWidth / this.ViewModel.Hours.Count);
-		double xOffset = columnWidth / 2;
 		double rowHeight = this.PART_AvailabilityCanvas.ActualHeight / this.ViewModel.FreeBusyAttendees.Count;
 
 		(double xPosOfEvent, double widthOfEvent) = this.CalcTimeStartWidth(this.EventStartDate, this.EventEndDate);
@@ -608,7 +603,15 @@ internal sealed partial class AvailabilityGrid : UserControl
 	{
 		this.SyncAvailabilityBlockPositions();
 
-		this.PART_AvailabilityTimeVerticalLinesLayout.MinItemHeight = e.NewSize.Height;
+		double columnWidth = e.NewSize.Width / this.ViewModel.Hours.Count;
+		double horzPadding = columnWidth / 2;
+
+		if (this.UseLayoutRounding)
+		{
+			horzPadding = Math.Round(horzPadding);
+		}
+
+		this.PART_AvailabilityGridHorizontalLinesLayout.Padding = new Thickness(horzPadding, 0, horzPadding, 0);
 	}
 
 

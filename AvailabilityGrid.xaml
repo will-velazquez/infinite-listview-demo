@@ -42,11 +42,25 @@
                         Grid.Row="0"
                         ItemsSource="{x:Bind ViewModel.Hours}">
                         <ItemsRepeater.Layout>
-                            <UniformGridLayout x:Name="PART_AvailabilityTimeVerticalLinesLayout" ItemsJustification="SpaceAround" />
+                            <app1:UniformStackLayout Orientation="Horizontal" />
                         </ItemsRepeater.Layout>
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="x:String">
                                 <Border BorderThickness="1,0,0,0" HorizontalAlignment="Center" BorderBrush="Magenta" />
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+
+                    <ItemsRepeater 
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        ItemsSource="{x:Bind ViewModel.FreeBusyAttendees}">
+                        <ItemsRepeater.Layout>
+                            <app1:UniformStackLayout x:Name="PART_AvailabilityGridHorizontalLinesLayout" Orientation="Vertical" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" BorderBrush="Magenta" />
                             </DataTemplate>
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
@@ -64,7 +78,7 @@
                         Grid.Row="1"
                         ItemsSource="{x:Bind ViewModel.Hours}">
                         <ItemsRepeater.Layout>
-                            <UniformGridLayout ItemsJustification="SpaceAround" />
+                            <app1:UniformStackLayout Orientation="Horizontal" />
                         </ItemsRepeater.Layout>
                         <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="x:String">
@@ -75,21 +89,26 @@
                 </Grid>
             </ScrollViewer>
 
-            <ItemsRepeater
-                x:Name="PART_AttendeeNames" 
+            <Border
                 Grid.Column="0"
-                ItemsSource="{x:Bind ViewModel.FreeBusyAttendees, Mode=OneWay}"
-                SizeChanged="PART_AttendeeNames_SizeChanged"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 VerticalAlignment="Top">
-                <ItemsRepeater.Layout>
-                    <StackLayout Orientation="Vertical" />
-                </ItemsRepeater.Layout>
-                <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="app1:FreeBusyAttendee">
-                        <TextBlock HorizontalAlignment="Left" HorizontalTextAlignment="Left" Text="{x:Bind AttendeeId}" />
-                    </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
+                <ItemsRepeater
+                    x:Name="PART_AttendeeNames" 
+                    Grid.Column="0"
+                    ItemsSource="{x:Bind ViewModel.FreeBusyAttendees, Mode=OneWay}"
+                    SizeChanged="PART_AttendeeNames_SizeChanged"
+                    VerticalAlignment="Top">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Orientation="Vertical" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="app1:FreeBusyAttendee">
+                            <TextBlock HorizontalAlignment="Left" HorizontalTextAlignment="Left" Text="{x:Bind AttendeeId}" />
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>
