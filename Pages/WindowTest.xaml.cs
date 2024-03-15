@@ -7,10 +7,48 @@ namespace App1.Pages;
 
 public sealed partial class WindowTest : Page
 {
-    public WindowTest()
-    {
-        this.InitializeComponent();
-    }
+	private bool _setOwnerWindow;
+	private bool _modalOwnerWindowOverride;
+
+	public WindowTest()
+	{
+		this.InitializeComponent();
+
+		this._setOwnerWindow = this.Button1_Option_SetOwnerWindow.IsChecked ?? false;
+	}
+
+	private void Button1_Option_IsModal_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (Button1_Option_IsModal.SelectedItem is RadioButton { Content: "true" })
+		{
+			this._setOwnerWindow = this.Button1_Option_SetOwnerWindow.IsChecked ?? false;
+			this._modalOwnerWindowOverride = true;
+			this.Button1_Option_SetOwnerWindow.IsChecked = true;
+			this.Button1_Option_SetOwnerWindow.IsEnabled = false;
+		}
+		else
+		{
+			this.Button1_Option_SetOwnerWindow.IsChecked = this._setOwnerWindow;
+			this._modalOwnerWindowOverride = false;
+			this.Button1_Option_SetOwnerWindow.IsEnabled = true;
+		}
+	}
+
+	private void Button1_Option_SetOwnerWindow_Checked(object sender, RoutedEventArgs e)
+	{
+		if (!this._modalOwnerWindowOverride)
+		{
+			this._setOwnerWindow = this.Button1_Option_SetOwnerWindow.IsChecked ?? false;
+		}
+	}
+
+	private void Button1_Option_SetOwnerWindow_Unchecked(object sender, RoutedEventArgs e)
+	{
+		if (!this._modalOwnerWindowOverride)
+		{
+			this._setOwnerWindow = this.Button1_Option_SetOwnerWindow.IsChecked ?? false;
+		}
+	}
 
 	private void Button1_Click(object sender, RoutedEventArgs e)
 	{
@@ -120,14 +158,18 @@ public sealed partial class WindowTest : Page
 				defaultButton.Content = $"default ({presenter.IsResizable})";
 				break;
 		}
-		
-		AppWindow.Create(presenter).Show(ActivateOnCreateCheckbox.IsChecked ?? false);
+
+		bool setOwnerWindow = this.Button1_Option_SetOwnerWindow.IsChecked ?? false;
+
+		AppWindow appWindow = setOwnerWindow ? AppWindow.Create(presenter, this.XamlRoot.ContentIslandEnvironment.AppWindowId) : AppWindow.Create(presenter);
+
+		appWindow.Show(ActivateOnCreateCheckbox.IsChecked ?? false);
 	}
 
 	private void Button2_Click(object sender, RoutedEventArgs e)
 	{
 		CompactOverlayPresenter presenter = CompactOverlayPresenter.Create();
-		
+
 		AppWindow.Create(presenter).Show(ActivateOnCreateCheckbox.IsChecked ?? false);
 	}
 }

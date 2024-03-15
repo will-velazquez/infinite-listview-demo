@@ -38,11 +38,12 @@
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
-            <RadioButtons x:Name="Button1_Option_IsModal" Header="IsModal" SelectedIndex="0" MaxColumns="10">
+            <RadioButtons x:Name="Button1_Option_IsModal" Header="IsModal" SelectedIndex="0" MaxColumns="10" SelectionChanged="Button1_Option_IsModal_SelectionChanged">
                 <RadioButton Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
+            <CheckBox x:Name="Button1_Option_SetOwnerWindow" Content="Set Owner Window" Checked="Button1_Option_SetOwnerWindow_Checked" Unchecked="Button1_Option_SetOwnerWindow_Unchecked" />
             <RadioButtons x:Name="Button1_Option_IsResizable" Header="IsResizable" SelectedIndex="0" MaxColumns="10">
                 <RadioButton Content="default" />
                 <RadioButton Content="false" />
