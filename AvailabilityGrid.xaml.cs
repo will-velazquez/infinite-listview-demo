@@ -19,8 +19,7 @@ enum FreeBusyItemType
 	FreeBusyItemTypeFree,
 	FreeBusyItemTypeUnavailable,
 	FreeBusyItemTypeTentative,
-	// not found on the server
-	FreeBusyItemTypeUserNotFound,
+	FreeBusyItemTypeUserNotFound, // not found on the server
 	FreeBusyItemTypeWorkingElsewhere, // Exchange only
 }
 
@@ -254,49 +253,19 @@ internal sealed partial class AvailabilityGrid : UserControl
 		this.SyncAvailabilityBlockPositions();
 	}
 
-	private double GetGridContainerWidth(bool usesFixedHourWidth, double viewportWidth)
-	{
-		if (usesFixedHourWidth)
-		{
-			return double.NaN;
-		}
-		else
-		{
-			return viewportWidth;
-		}
-	}
-
 	private int CalcNumHours(int startHour, int endHour) => Math.Max(5, endHour - startHour);
-
-	private (double HourWidth, int NumHours) CalcHourSizing(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
-	{
-		int numHours = this.CalcNumHours(startHour, endHour);
-		double availableWidth;
-
-		if (usesFixedHourWidth)
-		{
-			availableWidth = fixedHourWidth * numHours;
-		}
-		else
-		{
-			availableWidth = viewportWidth - margin.Left - margin.Right;
-		}
-
-		double hourWidth = availableWidth / numHours;
-
-		return (hourWidth, numHours);
-	}
 
 	private double GetGridColumnWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
 	{
 		if (usesFixedHourWidth)
 		{
-			(double hourWidth, int numHours) = this.CalcHourSizing(usesFixedHourWidth, startHour, endHour, fixedHourWidth, viewportWidth, margin);
+			int numHours = this.CalcNumHours(startHour, endHour);
+			
+			// The 0.5 here accounts for our left offset to align the first hour
+			// with the left edge of the grid
+			double requiredWidth = fixedHourWidth * (numHours + 0.5);
 
-			// Account for additional space at the beginning and end because the grid itself is offset
-			double totalWidth = hourWidth * numHours + (hourWidth / 2);
-
-			return totalWidth;
+			return requiredWidth;
 		}
 		else
 		{
@@ -319,26 +288,6 @@ internal sealed partial class AvailabilityGrid : UserControl
 		}
 
 		return new GridLength(hourWidth / 2, GridUnitType.Pixel);
-	}
-
-	private Thickness GetAvailabilityCanvasPadding(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
-	{
-		(double hourWidth, int _) = this.CalcHourSizing(usesFixedHourWidth, startHour, endHour, fixedHourWidth, viewportWidth, margin);
-
-		return new Thickness(hourWidth / 2, 0, 0, 0);
-	}
-
-	private double GetHourGridWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth)
-	{
-		if (usesFixedHourWidth)
-		{
-			int numHours = Math.Max(5, endHour - startHour);
-			return fixedHourWidth * numHours;
-		}
-		else
-		{
-			return double.NaN;
-		}
 	}
 
 	private string GetFinalHourText(int startHour, int endHour)
@@ -724,15 +673,9 @@ internal sealed partial class AvailabilityGrid : UserControl
 		this.SyncAvailabilityBlockPositions();
 	}
 
-
 	private void PART_AttendeeNames_SizeChanged(object? sender, SizeChangedEventArgs e)
 	{
 		this.PART_AvailabilityGridContainer.Margin = new Thickness(e.NewSize.Width, 0, 0, 0);
 		this.PART_AvailabilityCanvasRow.Height = new GridLength(e.NewSize.Height, GridUnitType.Pixel);
-	}
-
-	private void PART_AvailabilityCanvasContainer_SizeChanged(object sender, SizeChangedEventArgs e)
-	{
-
 	}
 }
