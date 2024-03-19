@@ -8,12 +8,13 @@
     <FrameworkElement.Resources>
         <Style TargetType="app1:AvailabilityGrid">
             <Setter Property="UsesFixedHourWidth" Value="False" />
-            <Setter Property="FixedHourWidth" Value="50" />
-            <Setter Property="StartTime" Value="0" />
-            <Setter Property="EndTime" Value="24" />
+            <Setter Property="FixedHourWidth" Value="25" />
+            <Setter Property="StartHour" Value="0" />
+            <Setter Property="EndHour" Value="24" />
         </Style>
     </FrameworkElement.Resources>
-    <Grid RowSpacing="7">
+    <Grid RowSpacing="7"
+          Margin="7">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -34,66 +35,73 @@
                 HorizontalScrollMode="Auto"
                 HorizontalScrollBarVisibility="Auto">
                 <Grid
-                    x:Name="PART_HourGridContainer"
                     HorizontalAlignment="Left"
-                    Width="{x:Bind GetHourGridWidth(UsesFixedHourWidth, StartTime, EndTime, FixedHourWidth, PART_HourGridScrollViewer.ViewportWidth), Mode=OneWay}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition x:Name="PART_AvailabilityCanvasRow" Height="0" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                    Width="{x:Bind GetGridContainerWidth(UsesFixedHourWidth, PART_HourGridScrollViewer.ViewportWidth), Mode=OneWay}">
+                    <Grid
+                        x:Name="PART_HourGridContainer">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{x:Bind GetGridColumnWidth(UsesFixedHourWidth), Mode=OneWay}" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="PART_AvailabilityCanvasRow" Height="0" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <ItemsRepeater 
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        ItemsSource="{x:Bind ViewModel.Hours}">
-                        <ItemsRepeater.Layout>
-                            <app1:UniformStackLayout Orientation="Horizontal" />
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <Border BorderThickness="1,0,0,0" HorizontalAlignment="Center" BorderBrush="Magenta" />
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
+                        <ItemsRepeater 
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            ItemsSource="{x:Bind ViewModel.Hours}">
+                            <ItemsRepeater.Layout>
+                                <app1:UniformStackLayout Orientation="Horizontal" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Border BorderThickness="1,0,0,0" HorizontalAlignment="Center" BorderBrush="Magenta" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
 
-                    <ItemsRepeater 
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        ItemsSource="{x:Bind ViewModel.FreeBusyAttendees}">
-                        <ItemsRepeater.Layout>
-                            <app1:UniformStackLayout x:Name="PART_AvailabilityGridHorizontalLinesLayout" Orientation="Vertical" />
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" BorderBrush="Magenta" />
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
+                        <ItemsRepeater 
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            ItemsSource="{x:Bind ViewModel.FreeBusyAttendees}">
+                            <ItemsRepeater.Layout>
+                                <app1:UniformStackLayout x:Name="PART_AvailabilityGridHorizontalLinesLayout" Orientation="Vertical" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" BorderBrush="Magenta" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
 
-                    <Canvas
-                        x:Name="PART_AvailabilityCanvas"
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        Background="Transparent"
-                        SizeChanged="PART_AvailabilityCanvas_SizeChanged" />
+                        <Canvas
+                            x:Name="PART_AvailabilityCanvas"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            Background="Transparent"
+                            HorizontalAlignment="Stretch"
+                            Width="{x:Bind GetHourGridWidth(UsesFixedHourWidth, StartHour, EndHour, FixedHourWidth), Mode=OneWay}"
+                            SizeChanged="PART_AvailabilityCanvas_SizeChanged" />
 
-                    <ItemsRepeater
-                        x:Name="PART_AvailabilityHoursContainer"
-                        Grid.Column="0"
-                        Grid.Row="1"
-                        ItemsSource="{x:Bind ViewModel.Hours}">
-                        <ItemsRepeater.Layout>
-                            <app1:UniformStackLayout Orientation="Horizontal" />
-                        </ItemsRepeater.Layout>
-                        <ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <TextBlock HorizontalAlignment="Center" Text="{x:Bind}" />
-                            </DataTemplate>
-                        </ItemsRepeater.ItemTemplate>
-                    </ItemsRepeater>
+                        <ItemsRepeater
+                            x:Name="PART_AvailabilityHoursContainer"
+                            Grid.Column="0"
+                            Grid.Row="1"
+                            ItemsSource="{x:Bind ViewModel.Hours}">
+                            <ItemsRepeater.Layout>
+                                <app1:UniformStackLayout Orientation="Horizontal" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <TextBlock
+                                        HorizontalTextAlignment="Center"
+                                        HorizontalAlignment="Stretch"
+                                        Text="{x:Bind}" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </Grid>
                 </Grid>
             </ScrollViewer>
 

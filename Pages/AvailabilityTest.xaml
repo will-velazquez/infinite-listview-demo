@@ -52,11 +52,11 @@
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Vertical">
                 <TextBlock Text="Date Start Time: " />
-                <Slider Minimum="0" Maximum="24" StepFrequency="0.05" Value="{x:Bind PART_AvailabilityGrid.StartTime, Mode=TwoWay}" />
+                <Slider Minimum="0" Maximum="24" StepFrequency="0.05" Value="{x:Bind PART_AvailabilityGrid.StartHour, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Vertical">
                 <TextBlock Text="Date End Time: " />
-                <Slider Minimum="0" Maximum="24" StepFrequency="0.05" Value="{x:Bind PART_AvailabilityGrid.EndTime, Mode=TwoWay}" />
+                <Slider Minimum="0" Maximum="24" StepFrequency="0.05" Value="{x:Bind PART_AvailabilityGrid.EndHour, Mode=TwoWay}" />
             </StackPanel>
         </Grid>
 
