@@ -62,18 +62,6 @@ internal sealed partial class FreeBusyViewModel : ObservableObject
 				new FreeBusyItem(DateTime.Parse("03/13/2024 0:00"), DateTime.Parse("03/14/2024 0:00"), FreeBusyItemType.FreeBusyItemTypeUserNotFound, "Unavailable"),
 			}));
 
-		for (int i = -1; i < 24; ++i)
-		{
-			if (i == 11)
-			{
-				this.Hours.Add("noon");
-			}
-			else
-			{
-				this.Hours.Add((((i + 12) % 12) + 1).ToString());
-			}
-		}
-
 		this.FreeBusyGaps.Add(new FreeBusyGap(DateTime.Parse("03/13/2024 0:00"), DateTime.Parse("03/13/2024 8:00")));
 		this.FreeBusyGaps.Add(new FreeBusyGap(DateTime.Parse("03/13/2024 9:30"), DateTime.Parse("03/13/2024 11:30")));
 		this.FreeBusyGaps.Add(new FreeBusyGap(DateTime.Parse("03/13/2024 12:00"), DateTime.Parse("03/13/2024 2:30 PM")));
@@ -97,32 +85,34 @@ internal sealed partial class AvailabilityGrid : UserControl
 		set => this.SetValue(DateProperty, value);
 	}
 
-	public readonly static DependencyProperty StartHourProperty = DependencyProperty.Register(
-		nameof(StartHour),
-		typeof(int),
+	public readonly static DependencyProperty StartTimeProperty = DependencyProperty.Register(
+		nameof(StartTime),
+		typeof(double),
 		typeof(AvailabilityGrid),
-		new PropertyMetadata(0, (DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) =>
+		new PropertyMetadata((double)0, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 		{
+			((AvailabilityGrid)d).SyncStartEndTimes();
 		}));
 
-	public int StartHour
+	public double StartTime
 	{
-		get => (int)this.GetValue(StartHourProperty);
-		set => this.SetValue(StartHourProperty, value);
+		get => (double)this.GetValue(StartTimeProperty);
+		set => this.SetValue(StartTimeProperty, value);
 	}
 
-	public readonly static DependencyProperty EndHourProperty = DependencyProperty.Register(
-		nameof(EndHour),
-		typeof(int),
+	public readonly static DependencyProperty EndTimeProperty = DependencyProperty.Register(
+		nameof(EndTime),
+		typeof(double),
 		typeof(AvailabilityGrid),
-		new PropertyMetadata(24, (DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args) =>
+		new PropertyMetadata((double)24, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 		{
+			((AvailabilityGrid)d).SyncStartEndTimes();
 		}));
 
-	public int EndHour
+	public double EndTime
 	{
-		get => (int)this.GetValue(EndHourProperty);
-		set => this.SetValue(EndHourProperty, value);
+		get => (double)this.GetValue(EndTimeProperty);
+		set => this.SetValue(EndTimeProperty, value);
 	}
 
 	public readonly static DependencyProperty EventStartDateProperty = DependencyProperty.Register(
@@ -261,14 +251,15 @@ internal sealed partial class AvailabilityGrid : UserControl
 		this.PART_AvailabilityCanvas.Children.Add(this._attendeesEventRectangle);
 
 		this.SyncEventColor();
+		this.SyncStartEndTimes();
 		this.SyncAvailabilityBlockPositions();
 	}
 
-	private double GetHourGridWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth)
+	private double GetHourGridWidth(bool usesFixedHourWidth, double startTime, double endTime, double fixedHourWidth, double viewportWidth)
 	{
 		if (usesFixedHourWidth)
 		{
-			int numHours = Math.Max(5, endHour - startHour);
+			int numHours = Math.Max(5, (int)Math.Ceiling(endTime - startTime));
 
 			return fixedHourWidth * numHours;
 		}
@@ -354,34 +345,56 @@ internal sealed partial class AvailabilityGrid : UserControl
 		return brush;
 	}
 
-	private (double Start, double Width) CalcTimeStartWidth(DateTime startDate, DateTime endDate)
+	private (DateTime StartTime, DateTime EndTime) GridStartEndTimes()
 	{
-		DateOnly date = DateOnly.FromDayNumber(this.Date);
+		DateTime date = DateOnly.FromDayNumber(this.Date).ToDateTime(TimeOnly.MinValue, DateTimeKind.Local).ToUniversalTime();
 
-		TimeOnly startTime = DateOnly.FromDateTime(startDate.ToLocalTime()) < date
-			? TimeOnly.MinValue
-			: date < DateOnly.FromDateTime(startDate.ToLocalTime())
-			? TimeOnly.MaxValue
-			: TimeOnly.FromDateTime(startDate.ToLocalTime());
+		double startTimeHours = Math.Floor(this.StartTime);
 
-		TimeOnly endTime = DateOnly.FromDateTime(endDate.ToLocalTime()) < date
-			? TimeOnly.MinValue
-			: date < DateOnly.FromDateTime(endDate.ToLocalTime())
-			? TimeOnly.MaxValue
-			: TimeOnly.FromDateTime(endDate.ToLocalTime());
+		DateTime startTime = date.AddHours(startTimeHours);
 
-		if (endTime < startTime)
+		double duration = Math.Ceiling(this.EndTime) - startTimeHours;
+
+		if (duration < 5)
 		{
-			endTime = startTime;
+			duration = 5;
 		}
 
-		TimeSpan duration = endTime - startTime;
+		DateTime endTime = startTime.AddHours(duration);
 
-		double columnWidth = (this.PART_AvailabilityCanvas.ActualWidth / this.ViewModel.Hours.Count);
+		return (startTime, endTime);
+	}
+
+	private (double Start, double Width) CalcTimeStartWidth(DateTime blockStartDate, DateTime blockEndDate)
+	{
+		(DateTime gridStartTime, DateTime gridEndTime) = this.GridStartEndTimes();
+
+		DateTime cappedBlockStartDate = gridEndTime < blockStartDate
+			? gridEndTime
+			: blockStartDate < gridStartTime
+			? gridStartTime
+			: blockStartDate;
+
+		DateTime clampedBlockEndDate = gridEndTime < blockEndDate
+			? gridEndTime
+			: blockEndDate < gridStartTime
+			? gridStartTime
+			: blockEndDate;
+
+		TimeSpan blockDuration = clampedBlockEndDate - cappedBlockStartDate;
+
+		if (blockDuration <  TimeSpan.Zero)
+		{
+			blockDuration = TimeSpan.Zero;
+		}
+
+		TimeSpan relStartDate = cappedBlockStartDate - gridStartTime;
+
+		double columnWidth = this.PART_AvailabilityCanvas.ActualWidth / this.ViewModel.Hours.Count;
 		double xOffset = columnWidth / 2;
 
-		double xPos = xOffset + (startTime.Hour + (startTime.Minute / 60.0)) * columnWidth;
-		double width = ((duration.Hours + (duration.Minutes / 60.0)) * columnWidth);
+		double xPos = xOffset + relStartDate.TotalHours * columnWidth;
+		double width = blockDuration.TotalHours * columnWidth;
 
 		if (this.UseLayoutRounding)
 		{
@@ -407,12 +420,37 @@ internal sealed partial class AvailabilityGrid : UserControl
 		}
 	}
 
+	private void SyncStartEndTimes()
+	{
+		this.ViewModel.Hours.Clear();
+
+		(DateTime gridStartTime, DateTime gridEndTime) = this.GridStartEndTimes();
+
+		for (DateTime currentHour = gridStartTime; currentHour < gridEndTime; currentHour = currentHour.AddHours(1))
+		{
+			int hourNumber = currentHour.ToLocalTime().Hour;
+
+			if (hourNumber == 12)
+			{
+				// TODO i8n
+				this.ViewModel.Hours.Add("noon");
+			}
+			else
+			{
+				this.ViewModel.Hours.Add((((hourNumber + 12) % 12) + 1).ToString());
+			}
+		}
+
+		this.SyncAvailabilityBlockPositions();
+		this.SyncHorizontalLinesPadding();
+	}
+
 	private void SyncAvailabilityBlockPositions()
 	{
 		DateOnly date = DateOnly.FromDayNumber(this.Date);
 		double rowHeight = this.PART_AvailabilityCanvas.ActualHeight / this.ViewModel.FreeBusyAttendees.Count;
 
-		(double xPosOfEvent, double widthOfEvent) = this.CalcTimeStartWidth(this.EventStartDate, this.EventEndDate);
+		(double xPosOfEvent, double widthOfEvent) = this.CalcTimeStartWidth(this.EventStartDate.ToUniversalTime(), this.EventEndDate.ToUniversalTime());
 
 		foreach (FrameworkElement availabilityBlock in _availabilityBlocks)
 		{
@@ -468,6 +506,19 @@ internal sealed partial class AvailabilityGrid : UserControl
 		this._attendeesEventRectangle.Width = widthOfEvent;
 		Canvas.SetTop(this._attendeesEventRectangle, rowHeight);
 		this._attendeesEventRectangle.Height = this.PART_AvailabilityCanvas.ActualHeight - rowHeight;
+	}
+
+	private void SyncHorizontalLinesPadding()
+	{
+		double columnWidth = this.PART_AvailabilityCanvas.ActualWidth / this.ViewModel.Hours.Count;
+		double horzPadding = columnWidth / 2;
+
+		if (this.UseLayoutRounding)
+		{
+			horzPadding = Math.Round(horzPadding);
+		}
+
+		this.PART_AvailabilityGridHorizontalLinesLayout.Padding = new Thickness(horzPadding, 0, horzPadding, 0);
 	}
 
 	private void SyncAvailabilityBlocks()
@@ -603,16 +654,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 	private void PART_AvailabilityCanvas_SizeChanged(object? sender, SizeChangedEventArgs e)
 	{
 		this.SyncAvailabilityBlockPositions();
-
-		double columnWidth = e.NewSize.Width / this.ViewModel.Hours.Count;
-		double horzPadding = columnWidth / 2;
-
-		if (this.UseLayoutRounding)
-		{
-			horzPadding = Math.Round(horzPadding);
-		}
-
-		this.PART_AvailabilityGridHorizontalLinesLayout.Padding = new Thickness(horzPadding, 0, horzPadding, 0);
+		this.SyncHorizontalLinesPadding();
 	}
 
 

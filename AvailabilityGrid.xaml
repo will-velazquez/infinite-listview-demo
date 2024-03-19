@@ -9,8 +9,8 @@
         <Style TargetType="app1:AvailabilityGrid">
             <Setter Property="UsesFixedHourWidth" Value="False" />
             <Setter Property="FixedHourWidth" Value="50" />
-            <Setter Property="StartHour" Value="0" />
-            <Setter Property="EndHour" Value="24" />
+            <Setter Property="StartTime" Value="0" />
+            <Setter Property="EndTime" Value="24" />
         </Style>
     </FrameworkElement.Resources>
     <Grid RowSpacing="7">
@@ -36,7 +36,7 @@
                 <Grid
                     x:Name="PART_HourGridContainer"
                     HorizontalAlignment="Left"
-                    Width="{x:Bind GetHourGridWidth(UsesFixedHourWidth, StartHour, EndHour, FixedHourWidth, PART_HourGridScrollViewer.ViewportWidth), Mode=OneWay}">
+                    Width="{x:Bind GetHourGridWidth(UsesFixedHourWidth, StartTime, EndTime, FixedHourWidth, PART_HourGridScrollViewer.ViewportWidth), Mode=OneWay}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
