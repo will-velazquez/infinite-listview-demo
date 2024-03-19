@@ -223,7 +223,6 @@ internal sealed partial class AvailabilityGrid : UserControl
 		(byte)Math.Clamp(Math.Truncate(0.694 * 255), 0, 255),
 		(byte)Math.Clamp(Math.Truncate(0.702 * 255), 0, 255));
 
-
 	public AvailabilityGrid()
 	{
 		this.InitializeComponent();
