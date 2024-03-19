@@ -266,23 +266,73 @@ internal sealed partial class AvailabilityGrid : UserControl
 		}
 	}
 
-	private GridLength GetGridColumnWidth(bool usesFixedHourWidth)
+	private int CalcNumHours(int startHour, int endHour) => Math.Max(5, endHour - startHour);
+
+	private (double HourWidth, int NumHours) CalcHourSizing(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
 	{
+		int numHours = this.CalcNumHours(startHour, endHour);
+		double availableWidth;
+
 		if (usesFixedHourWidth)
 		{
-			return new GridLength(1, GridUnitType.Auto);
+			availableWidth = fixedHourWidth * numHours;
 		}
 		else
 		{
-			return new GridLength(1, GridUnitType.Star);
+			availableWidth = viewportWidth - margin.Left - margin.Right;
 		}
+
+		double hourWidth = availableWidth / numHours;
+
+		return (hourWidth, numHours);
 	}
 
-	private double GetHourGridWidth(bool usesFixedHourWidth, double startTime, double endTime, double fixedHourWidth)
+	private double GetGridColumnWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
 	{
 		if (usesFixedHourWidth)
 		{
-			int numHours = Math.Max(5, (int)Math.Ceiling(endTime - startTime));
+			(double hourWidth, int numHours) = this.CalcHourSizing(usesFixedHourWidth, startHour, endHour, fixedHourWidth, viewportWidth, margin);
+
+			// Account for additional space at the beginning and end because the grid itself is offset
+			double totalWidth = hourWidth * numHours + (hourWidth / 2);
+
+			return totalWidth;
+		}
+		else
+		{
+			return viewportWidth - margin.Left - margin.Right;
+		}
+	}
+
+	private GridLength GetHourHalfWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
+	{
+		double hourWidth;
+
+		if (usesFixedHourWidth)
+		{
+			hourWidth = fixedHourWidth;
+		}
+		else
+		{
+			int numHours = this.CalcNumHours(startHour, endHour);
+			hourWidth = (viewportWidth - margin.Left - margin.Right) / (numHours + 0.5);
+		}
+
+		return new GridLength(hourWidth / 2, GridUnitType.Pixel);
+	}
+
+	private Thickness GetAvailabilityCanvasPadding(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth, double viewportWidth, Thickness margin)
+	{
+		(double hourWidth, int _) = this.CalcHourSizing(usesFixedHourWidth, startHour, endHour, fixedHourWidth, viewportWidth, margin);
+
+		return new Thickness(hourWidth / 2, 0, 0, 0);
+	}
+
+	private double GetHourGridWidth(bool usesFixedHourWidth, int startHour, int endHour, double fixedHourWidth)
+	{
+		if (usesFixedHourWidth)
+		{
+			int numHours = Math.Max(5, endHour - startHour);
 			return fixedHourWidth * numHours;
 		}
 		else
@@ -291,7 +341,7 @@ internal sealed partial class AvailabilityGrid : UserControl
 		}
 	}
 
-	private string GetFinalHourText(double startTime, double endTime)
+	private string GetFinalHourText(int startHour, int endHour)
 	{
 		(DateTime _, DateTime endDateTime) = this.GridStartEndTimes();
 
@@ -417,23 +467,16 @@ internal sealed partial class AvailabilityGrid : UserControl
 
 		TimeSpan blockDuration = clampedBlockEndDate - cappedBlockStartDate;
 
-		if (blockDuration <  TimeSpan.Zero)
+		if (blockDuration < TimeSpan.Zero)
 		{
 			blockDuration = TimeSpan.Zero;
 		}
 
 		TimeSpan relStartDate = cappedBlockStartDate - gridStartTime;
 
-		double columnWidth = this.PART_AvailabilityCanvas.ActualWidth / this.ViewModel.Hours.Count;
-		double xOffset = columnWidth / 2;
-		double xPos = relStartDate.TotalHours * columnWidth + xOffset;
+		double columnWidth = this.PART_AvailabilityCanvas.ActualWidth / (this.CalcNumHours(this.StartHour, this.EndHour));
+		double xPos = relStartDate.TotalHours * columnWidth;
 		double width = blockDuration.TotalHours * columnWidth;
-
-		if (this.UseLayoutRounding)
-		{
-			xPos = Math.Round(xPos);
-			width = Math.Round(width);
-		}
 
 		return (xPos, width);
 	}
@@ -684,7 +727,12 @@ internal sealed partial class AvailabilityGrid : UserControl
 
 	private void PART_AttendeeNames_SizeChanged(object? sender, SizeChangedEventArgs e)
 	{
-		this.PART_HourGridContainer.Margin = new Thickness(e.NewSize.Width, 0, 0, 0);
+		this.PART_AvailabilityGridContainer.Margin = new Thickness(e.NewSize.Width, 0, 0, 0);
 		this.PART_AvailabilityCanvasRow.Height = new GridLength(e.NewSize.Height, GridUnitType.Pixel);
+	}
+
+	private void PART_AvailabilityCanvasContainer_SizeChanged(object sender, SizeChangedEventArgs e)
+	{
+
 	}
 }
