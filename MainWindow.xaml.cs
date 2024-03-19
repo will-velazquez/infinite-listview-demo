@@ -11,9 +11,6 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
-
-        IntPtr hwnd = WindowNative.GetWindowHandle(this);
-        WindowId windowId = AppWindow.Id;
     }
 
 	private void NavigationView_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
