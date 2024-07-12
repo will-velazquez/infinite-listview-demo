@@ -7,31 +7,10 @@ namespace Fantastical.App;
 
 public sealed partial class MainWindow : Window
 {
-    sealed class FooEx : Exception
-    {
-
-    }
-
     public MainWindow()
     {
         this.Closed += MainWindow_Closed;
         this.InitializeComponent();
-
-        bool yeah = false;
-
-        try
-        {
-            throw new FooEx();
-        }
-        catch (FooEx ex) when (yeah)
-        {
-            Debug.WriteLine($"Here");
-            throw;
-        }
-        catch (Exception ex)
-        {
-
-        }
     }
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
@@ -39,7 +18,7 @@ public sealed partial class MainWindow : Window
         Application.Current.Exit();
     }
 
-    private void NavigationView_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
+    private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
         if (args.IsSettingsSelected)
         {
@@ -47,8 +26,9 @@ public sealed partial class MainWindow : Window
         }
         else
         {
-            string pageTypeName = $"{nameof(Fantastical.App)}.{nameof(Pages)}.{((NavigationViewItem)args.SelectedItem).Tag}";
+            string pageTypeName = $"{nameof(Fantastical)}.{nameof(Fantastical.App)}.{nameof(Pages)}.{((NavigationViewItem)args.SelectedItem).Content}";
             Type pageType = Type.GetType(pageTypeName) ?? throw new NullReferenceException();
+
             this.ContentFrame.Navigate(pageType);
         }
     }

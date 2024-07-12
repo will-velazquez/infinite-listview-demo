@@ -4,10 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <NavigationView SelectionChanged="NavigationView_SelectionChanged">
         <NavigationView.MenuItems>
-            <NavigationViewItem Content="Image Test" Tag="ImageTest" />
-            <NavigationViewItem Content="Window Test" Tag="WindowTest" />
-            <NavigationViewItem Content="Viewport Test" Tag="ViewportTest" />
-            <NavigationViewItem Content="SegmentedCrashTest" Tag="SegmentedCrashTest" />
+            <NavigationViewItem Content="ImageTest" />
+            <NavigationViewItem Content="WindowTest" />
+            <NavigationViewItem Content="ViewportTest" />
+            <NavigationViewItem Content="SegmentedCrashTest" />
         </NavigationView.MenuItems>
         <Frame x:Name="ContentFrame" />
     </NavigationView>
