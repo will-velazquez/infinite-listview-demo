@@ -54,6 +54,18 @@ public sealed partial class WindowTest : Page
         }
     }
 
+    private void UpdateCustomizationOptions()
+    {
+        if (AppWindowTitleBar.IsCustomizationSupported() && this.Button1_Option_ExtendsContentIntoTitleBar.SelectedItem is RadioButton { Content: "true" })
+        {
+            this.Button1_Option_PreferredHeightOption.IsEnabled = true;
+        }
+        else
+        {
+            this.Button1_Option_PreferredHeightOption.IsEnabled = false;
+        }
+    }
+
     private void Button1_Click(object sender, RoutedEventArgs e)
     {
         RadioButton rb = (RadioButton)Button1_RadioButtons.SelectedItem;
@@ -145,7 +157,67 @@ public sealed partial class WindowTest : Page
         bool setOwnerWindow = this.Button1_Option_SetOwnerWindow.IsChecked ?? false;
         AppWindow appWindow = setOwnerWindow ? AppWindow.Create(presenter, this.XamlRoot.ContentIslandEnvironment.AppWindowId) : AppWindow.Create(presenter);
 
+        appWindow.Title = this.Button1_Textbox_Title.Text;
+
         appWindow.Show(ActivateOnCreateCheckbox.IsChecked ?? false);
+
+        switch (this.Button1_Option_IsShownInSwitchers.SelectedItem)
+        {
+            case RadioButton { Content: "false" }:
+                appWindow.IsShownInSwitchers = false;
+                break;
+            case RadioButton { Content: "true" }:
+                appWindow.IsShownInSwitchers = true;
+                break;
+            case RadioButton defaultButton:
+                defaultButton.Content = $"default ({appWindow.IsShownInSwitchers})";
+                break;
+        }
+
+        switch (this.Button1_Option_IconShowOptions.SelectedItem)
+        {
+            case RadioButton { Content: "ShowIconAndSystemMenu" }:
+                appWindow.TitleBar.IconShowOptions = IconShowOptions.ShowIconAndSystemMenu;
+                break;
+            case RadioButton { Content: "HideIconAndSystemMenu" }:
+                appWindow.TitleBar.IconShowOptions = IconShowOptions.HideIconAndSystemMenu;
+                break;
+            case RadioButton defaultButton:
+                defaultButton.Content = $"default ({appWindow.TitleBar.IconShowOptions})";
+                break;
+        }
+
+        switch (this.Button1_Option_ExtendsContentIntoTitleBar.SelectedItem)
+        {
+            case RadioButton { Content: "false" }:
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = false;
+                break;
+            case RadioButton { Content: "true" }:
+                appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                break;
+            case RadioButton defaultButton:
+                defaultButton.Content = $"default ({appWindow.TitleBar.ExtendsContentIntoTitleBar})";
+                break;
+        }
+
+        if (AppWindowTitleBar.IsCustomizationSupported() && appWindow.TitleBar.ExtendsContentIntoTitleBar)
+        {
+            switch (this.Button1_Option_PreferredHeightOption.SelectedItem)
+            {
+                case RadioButton { Content: "Standard" }:
+                    appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
+                    break;
+                case RadioButton { Content: "Tall" }:
+                    appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+                    break;
+                case RadioButton { Content: "Collapsed" }:
+                    appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
+                    break;
+                case RadioButton defaultButton:
+                    defaultButton.Content = $"default ({appWindow.TitleBar.PreferredHeightOption})";
+                    break;
+            }
+        }
     }
 
     private void Button2_Click(object sender, RoutedEventArgs e)
@@ -201,5 +273,10 @@ public sealed partial class WindowTest : Page
         Button1_Option_DefaultButton_IsMinimizable.Content = $"default ({presenter.IsMinimizable})";
         Button1_Option_DefaultButton_IsModal.Content = $"default ({presenter.IsModal})";
         Button1_Option_DefaultButton_IsResizable.Content = $"default ({presenter.IsResizable})";
+    }
+
+    private void Button1_Option_ExtendsContentIntoTitleBar_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        this.UpdateCustomizationOptions();
     }
 }
