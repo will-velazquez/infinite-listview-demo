@@ -6,7 +6,7 @@
         <CheckBox x:Name="ActivateOnCreateCheckbox" Content="Activate on create?" />
         <StackPanel Orientation="Vertical" Spacing="12">
             <Button Content="OverlappedPresenter" Click="Button1_Click" />
-            <RadioButtons x:Name="Button1_RadioButtons" Header="OverlappedPresenter Create Style" SelectedIndex="0" MaxColumns="10">
+            <RadioButtons x:Name="Button1_RadioButtons" Header="OverlappedPresenter Create Style" SelectedIndex="0" MaxColumns="10" SelectionChanged="Button1_RadioButtons_SelectionChanged">
                 <RadioButton Content="Create" Tag="Create" />
                 <RadioButton Content="CreateForToolWindow" Tag="CreateForToolWindow" />
                 <RadioButton Content="CreateForContextMenu" Tag="CreateForContextMenu" />
@@ -14,38 +14,38 @@
             </RadioButtons>
 
             <RadioButtons x:Name="Button1_Option_HasBorder" Header="HasBorder" SelectedIndex="0" MaxColumns="10">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_HasBorder" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
             <RadioButtons x:Name="Button1_Option_HasTitleBar" Header="HasTitleBar" SelectedIndex="0" MaxColumns="10">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_HasTitleBar" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
             <RadioButtons x:Name="Button1_Option_IsAlwaysOnTop" Header="IsAlwaysOnTop" SelectedIndex="0" MaxColumns="10">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_IsAlwaysOnTop" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
             <RadioButtons x:Name="Button1_Option_IsMaximizable" Header="IsMaximizable" SelectedIndex="0" MaxColumns="10">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_IsMaximizable" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
             <RadioButtons x:Name="Button1_Option_IsMinimizable" Header="IsMinimizable" SelectedIndex="0" MaxColumns="10">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_IsMinimizable" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
             <RadioButtons x:Name="Button1_Option_IsModal" Header="IsModal" SelectedIndex="0" MaxColumns="10" SelectionChanged="Button1_Option_IsModal_SelectionChanged">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_IsModal" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
             <CheckBox x:Name="Button1_Option_SetOwnerWindow" Content="Set Owner Window" Checked="Button1_Option_SetOwnerWindow_Checked" Unchecked="Button1_Option_SetOwnerWindow_Unchecked" />
             <RadioButtons x:Name="Button1_Option_IsResizable" Header="IsResizable" SelectedIndex="0" MaxColumns="10">
-                <RadioButton Content="default" />
+                <RadioButton x:Name="Button1_Option_DefaultButton_IsResizable" Content="default" />
                 <RadioButton Content="false" />
                 <RadioButton Content="true" />
             </RadioButtons>
