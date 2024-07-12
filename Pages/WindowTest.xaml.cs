@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 
-namespace App1.Pages;
+namespace Fantastical.App.Pages;
 
 public sealed partial class WindowTest : Page
 {

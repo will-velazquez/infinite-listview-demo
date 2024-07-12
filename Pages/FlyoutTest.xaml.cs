@@ -1,7 +1,6 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-namespace App1.Pages;
+namespace Fantastical.App.Pages;
 
 internal sealed partial class FlyoutTest : Page
 {

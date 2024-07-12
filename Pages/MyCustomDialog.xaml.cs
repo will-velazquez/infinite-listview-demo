@@ -2,10 +2,11 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Fantastical.App.Pages;
 
-internal sealed partial class ImageTest : Page
+internal sealed partial class MyCustomDialog : ContentDialog
 {
-	public ImageTest()
+	public MyCustomDialog()
     {
         this.InitializeComponent();
+        
     }
 }

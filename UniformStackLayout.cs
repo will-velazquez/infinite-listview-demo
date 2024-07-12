@@ -3,14 +3,14 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.Foundation;
 
-namespace App1;
+namespace Fantastical.App;
 
 class UniformStackLayout : NonVirtualizingLayout
 {
 	public readonly static DependencyProperty OrientationProperty = DependencyProperty.Register(
 		nameof(Orientation),
 		typeof(Orientation),
-		typeof(AvailabilityGrid),
+		typeof(UniformStackLayout),
 		new PropertyMetadata(Orientation.Vertical, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 		{
 			((UniformStackLayout)d).InvalidateMeasure();
@@ -25,7 +25,7 @@ class UniformStackLayout : NonVirtualizingLayout
 	public readonly static DependencyProperty PaddingProperty = DependencyProperty.Register(
 			nameof(Padding),
 			typeof(Thickness),
-			typeof(AvailabilityGrid),
+			typeof(UniformStackLayout),
 			new PropertyMetadata(default(Thickness), (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
 			{
 				((UniformStackLayout)d).InvalidateMeasure();

@@ -1,9 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using System.Diagnostics;
 
-namespace App1.Pages;
+namespace Fantastical.App.Pages;
 
 internal sealed partial class ViewportTest : Page
 {

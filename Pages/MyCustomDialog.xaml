@@ -1,5 +1,5 @@
-<Page
-    x:Class="Fantastical.App.Pages._BlankPage"
+<ContentDialog
+    x:Class="Fantastical.App.Pages.MyCustomDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-</Page>
+</ContentDialog>
