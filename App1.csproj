@@ -15,14 +15,6 @@
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Remove="Pages\MyCustomDialog.xaml" />
-		<None Remove="Pages\ScrollAreaTest.xaml" />
-		<None Remove="Pages\SegmentedCrashTest.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Remove="MonthDayControl.xaml" />
-	</ItemGroup>
-	<ItemGroup>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />
 		<Content Include="Assets\Square150x150Logo.scale-200.png" />
@@ -41,7 +33,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="1.0.4" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
@@ -53,23 +45,6 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="MonthDayControl.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Pages\ScrollAreaTest.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Pages\SegmentedCrashTest.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-		<Page Update="Pages\MyCustomDialog.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
 	</ItemGroup>
 
 	<!-- 

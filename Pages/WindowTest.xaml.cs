@@ -159,8 +159,6 @@ public sealed partial class WindowTest : Page
 
         appWindow.Title = this.Button1_Textbox_Title.Text;
 
-        appWindow.Show(ActivateOnCreateCheckbox.IsChecked ?? false);
-
         switch (this.Button1_Option_IsShownInSwitchers.SelectedItem)
         {
             case RadioButton { Content: "false" }:
@@ -218,6 +216,8 @@ public sealed partial class WindowTest : Page
                     break;
             }
         }
+        
+        appWindow.Show(ActivateOnCreateCheckbox.IsChecked ?? false);
     }
 
     private void Button2_Click(object sender, RoutedEventArgs e)

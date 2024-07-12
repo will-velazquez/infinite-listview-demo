@@ -8,6 +8,7 @@
             <NavigationViewItem Content="WindowTest" />
             <NavigationViewItem Content="ViewportTest" />
             <NavigationViewItem Content="SegmentedCrashTest" />
+            <NavigationViewItem IsSelected="True" Content="WindowContentDialogTest" />
         </NavigationView.MenuItems>
         <Frame x:Name="ContentFrame" />
     </NavigationView>
