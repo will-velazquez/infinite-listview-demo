@@ -148,12 +148,25 @@ public sealed partial class WindowTest : Page
         appWindow.Show(ActivateOnCreateCheckbox.IsChecked ?? false);
     }
 
-	private void Button2_Click(object sender, RoutedEventArgs e)
-	{
-		CompactOverlayPresenter presenter = CompactOverlayPresenter.Create();
+    private void Button2_Click(object sender, RoutedEventArgs e)
+    {
+        CompactOverlayPresenter presenter = CompactOverlayPresenter.Create();
 
-		AppWindow.Create(presenter).Show(ActivateOnCreateCheckbox.IsChecked ?? false);
-	}
+        switch (this.Button1_Option_InitialSize.SelectedItem)
+        {
+            case RadioButton { Content: "Small" }:
+                presenter.InitialSize = CompactOverlaySize.Small;
+                break;
+            case RadioButton { Content: "Medium" }:
+                presenter.InitialSize = CompactOverlaySize.Medium;
+                break;
+            case RadioButton { Content: "Large" }:
+                presenter.InitialSize = CompactOverlaySize.Large;
+                break;
+        }
+
+        AppWindow.Create(presenter).Show(ActivateOnCreateCheckbox.IsChecked ?? false);
+    }
 
     private void Button1_RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

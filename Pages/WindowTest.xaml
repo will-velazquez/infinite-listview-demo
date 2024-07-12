@@ -50,7 +50,15 @@
                 <RadioButton Content="true" />
             </RadioButtons>
         </StackPanel>
-        <Button Content="CompactOverlayPresenter" Click="Button2_Click" />
+        <StackPanel Orientation="Vertical" Spacing="12">
+            <Button Content="CompactOverlayPresenter" Click="Button2_Click" />
+            <RadioButtons x:Name="Button1_Option_InitialSize" Header="Initial Size" SelectedIndex="0" MaxColumns="10">
+                <RadioButton x:Name="Button1_Option_DefaultButton_InitialSize" Content="default" />
+                <RadioButton Content="Small" />
+                <RadioButton Content="Medium" />
+                <RadioButton Content="Large" />
+            </RadioButtons>
+        </StackPanel>
     </StackPanel>
 
 </Page>
