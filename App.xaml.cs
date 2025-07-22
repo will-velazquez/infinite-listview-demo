@@ -20,22 +20,6 @@ public sealed partial class App : Application
     [STAThread]
     static void Main()
     {
-
-        try
-        {
-            throw new ArgumentException($"");
-        }
-        catch (ArgumentException)
-        {
-            Console.WriteLine($"foo");
-            throw;
-        }
-        catch (Exception)
-        {
-        }
-        finally
-        {
-        }
         XamlCheckProcessRequirements();
 
         ComWrappersSupport.InitializeComWrappers();
