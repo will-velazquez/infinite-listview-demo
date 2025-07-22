@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics;
 
-namespace Fantastical.App;
+namespace Fantastical.App.Components.Dialogs;
 
 public sealed class WindowedContentDialogButtonClickDeferral(Action complete)
 {
