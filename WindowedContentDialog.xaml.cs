@@ -310,6 +310,8 @@ sealed partial class WindowedContentDialog : UserControl
             EnableWindow(hwnd, false);
         }
 
+        this.Opened?.Invoke(this, new WindowedContentDialogOpenedEventArgs());
+
         ContentDialogResult contentDialogResult = await this._taskCompletionSource.Task;
 
         this._taskCompletionSource = null;
