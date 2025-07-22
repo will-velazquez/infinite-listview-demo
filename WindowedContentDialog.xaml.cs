@@ -12,6 +12,54 @@ using Windows.Graphics;
 
 namespace Fantastical.App;
 
+public sealed class WindowedContentDialogButtonClickDeferral(Action complete)
+{
+    private readonly Action _complete = complete;
+
+    public void Complete() => this._complete();
+}
+
+public sealed class WindowedContentDialogButtonClickEventArgs(Func<WindowedContentDialogButtonClickDeferral> getDeferral)
+{
+    public bool Cancel { get; set; }
+
+    private readonly Func<WindowedContentDialogButtonClickDeferral> _getDeferral = getDeferral;
+
+    public WindowedContentDialogButtonClickDeferral GetDeferral() => this._getDeferral();
+}
+
+public sealed class WindowedContentDialogClosedEventArgs(ContentDialogResult result)
+{
+    public ContentDialogResult Result { get; } = result;
+}
+
+public sealed class WindowedContentDialogClosingDeferral(Action complete)
+{
+    private readonly Action _complete = complete;
+
+    public void Complete() => this._complete();
+
+}
+
+public sealed class WindowedContentDialogClosingEventArgs(ContentDialogResult result, Func<WindowedContentDialogClosingDeferral> getDeferral)
+{
+    public bool Cancel { get; set; }
+    public ContentDialogResult Result { get; } = result;
+
+    private readonly Func<WindowedContentDialogClosingDeferral> _getDeferral = getDeferral;
+
+    public WindowedContentDialogClosingDeferral GetDeferral() => this._getDeferral();
+
+}
+
+
+public sealed class WindowedContentDialogOpenedEventArgs
+{
+}
+
+/// <summary>
+/// A drop-in replacement for ContentDialog, which uses a dedicated Window rather than embedding itself into a given XamlRoot
+/// </summary>
 sealed partial class WindowedContentDialog : UserControl
 {
     public static readonly DependencyProperty PrimaryButtonTextProperty = DependencyProperty.Register(
@@ -182,6 +230,13 @@ sealed partial class WindowedContentDialog : UserControl
         set => this.SetValue(DefaultButtonProperty, value);
     }
 
+    public event TypedEventHandler<WindowedContentDialog, WindowedContentDialogButtonClickEventArgs>? CloseButtonClick;
+    public event TypedEventHandler<WindowedContentDialog, WindowedContentDialogClosedEventArgs>? Closed;
+    public event TypedEventHandler<WindowedContentDialog, WindowedContentDialogClosingEventArgs>? Closing;
+    public event TypedEventHandler<WindowedContentDialog, WindowedContentDialogOpenedEventArgs>? Opened;
+    public event TypedEventHandler<WindowedContentDialog, WindowedContentDialogButtonClickEventArgs>? PrimaryButtonClick;
+    public event TypedEventHandler<WindowedContentDialog, WindowedContentDialogButtonClickEventArgs>? SecondaryButtonClick;
+
     public WindowedContentDialog()
     {
         this.InitializeComponent();
@@ -231,6 +286,7 @@ sealed partial class WindowedContentDialog : UserControl
             SetWindowOwner(this._window, ownerWindowId.Value);
         }
 
+        this._window.AppWindow.Destroying += this.AppWindow_Destroying;
         this._window.AppWindow.SetPresenter(CreatePresenter(modal));
         this._window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
         this._window.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
@@ -239,7 +295,7 @@ sealed partial class WindowedContentDialog : UserControl
         this._window.AppWindow.Move(origin);
 
         this.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        this.InvalidateArrange();        
+        this.InvalidateArrange();
 
         this._window.SizeChanged += this.Window_SizeChanged;
         this._window.Closed += this.Window_Closed;
@@ -260,6 +316,7 @@ sealed partial class WindowedContentDialog : UserControl
 
         this._window.SizeChanged -= this.Window_SizeChanged;
         this._window.Closed -= this.Window_Closed;
+        this._window.AppWindow.Destroying -= this.AppWindow_Destroying;
 
         if (modal && ownerWindowId.HasValue)
         {
@@ -267,9 +324,73 @@ sealed partial class WindowedContentDialog : UserControl
             EnableWindow(hwnd, true);
         }
 
-        this._window.Close();
+        this._window.Content = null;
+        this._window.AppWindow.Destroy();
+        this._window = null;
 
         return contentDialogResult;
+    }
+
+    private void AppWindow_Destroying(AppWindow sender, object args)
+    {
+        // We can't recover from this, so flag it as an error
+        this._taskCompletionSource?.SetException(new NotImplementedException());
+    }
+
+    private void PerformClosed(ContentDialogResult result)
+    {
+        this.Closed?.Invoke(this, new WindowedContentDialogClosedEventArgs(result));
+        this._taskCompletionSource?.SetResult(result);
+    }
+
+    private void PerformClosing(ContentDialogResult result)
+    {
+        bool deferred = false;
+
+        this.Closing?.Invoke(this, new WindowedContentDialogClosingEventArgs(result, () =>
+        {
+            deferred = true;
+
+            return new WindowedContentDialogClosingDeferral(() =>
+            {
+                this.PerformClosed(result);
+            });
+        }));
+
+        if (!deferred)
+        {
+            this.PerformClosed(result);
+        }
+    }
+
+    private void PerformClick(ContentDialogResult result)
+    {
+        bool deferred = false;
+
+        TypedEventHandler<WindowedContentDialog, WindowedContentDialogButtonClickEventArgs>? handler = result switch
+        {
+            ContentDialogResult.Primary => this.PrimaryButtonClick,
+            ContentDialogResult.Secondary => this.SecondaryButtonClick,
+            ContentDialogResult.None => this.CloseButtonClick,
+            _ => null,
+        };
+
+        handler?.Invoke(this, new WindowedContentDialogButtonClickEventArgs(() =>
+        {
+            deferred = true;
+
+            return new WindowedContentDialogButtonClickDeferral(() =>
+            {
+                this.PerformClosing(result);
+            });
+        }));
+
+        if (!deferred)
+        {
+            this.PerformClosing(result);
+        }
+
+        return;
     }
 
     protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -282,11 +403,6 @@ sealed partial class WindowedContentDialog : UserControl
             return;
         }
 
-        if (this._taskCompletionSource is null)
-        {
-            throw new NullReferenceException();
-        }
-
         ContentDialogButton defaultButton = this.DefaultButton;
 
         if (defaultButton != ContentDialogButton.None
@@ -295,24 +411,20 @@ sealed partial class WindowedContentDialog : UserControl
             if (defaultButton == ContentDialogButton.Primary && this.IsPrimaryButtonEnabled)
             {
                 e.Handled = true;
-                this._taskCompletionSource.SetResult(ContentDialogResult.Primary);
-
-                return;
+                this.PerformClick(ContentDialogResult.Primary);
             }
 
             if (defaultButton == ContentDialogButton.Secondary && this.IsSecondaryButtonEnabled)
             {
                 e.Handled = true;
-                this._taskCompletionSource.SetResult(ContentDialogResult.Secondary);
-
+                this.PerformClick(ContentDialogResult.Secondary);
                 return;
             }
 
             if (defaultButton == ContentDialogButton.Close)
             {
                 e.Handled = true;
-                this._taskCompletionSource.SetResult(ContentDialogResult.None);
-
+                this.PerformClick(ContentDialogResult.None);
                 return;
             }
         }
@@ -363,7 +475,7 @@ sealed partial class WindowedContentDialog : UserControl
 
     public void Hide()
     {
-        this._taskCompletionSource?.SetResult(ContentDialogResult.None);
+        this.PerformClosing(ContentDialogResult.None);
     }
 
     private void UpdateButtonsVisibilityStates()
@@ -503,41 +615,18 @@ sealed partial class WindowedContentDialog : UserControl
 
     private void Window_Closed(object sender, WindowEventArgs args)
     {
-        if (this._taskCompletionSource is not null)
-        {
-            this._taskCompletionSource.SetResult(ContentDialogResult.None);
-        }
+        // Cancel the close operation
+        // We'll close it ourselves later if appropriate
+        args.Handled = true;
+
+        this.PerformClosing(ContentDialogResult.None);
     }
 
-    private void PrimaryButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (this._taskCompletionSource is null)
-        {
-            throw new NullReferenceException();
-        }
+    private void PrimaryButton_Click(object sender, RoutedEventArgs e) => this.PerformClick(ContentDialogResult.Primary);
 
-        this._taskCompletionSource.SetResult(ContentDialogResult.Primary);
-    }
+    private void SecondaryButton_Click(object sender, RoutedEventArgs e) => this.PerformClick(ContentDialogResult.Secondary);
 
-    private void SecondaryButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (this._taskCompletionSource is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        this._taskCompletionSource.SetResult(ContentDialogResult.Secondary);
-    }
-
-    private void CloseButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (this._taskCompletionSource is null)
-        {
-            throw new NullReferenceException();
-        }
-
-        this._taskCompletionSource.SetResult(ContentDialogResult.None);
-    }
+    private void CloseButton_Click(object sender, RoutedEventArgs e) => this.PerformClick(ContentDialogResult.None);
 
     [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     private static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
