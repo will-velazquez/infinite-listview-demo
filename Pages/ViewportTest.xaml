@@ -49,9 +49,8 @@
                 <Rectangle Canvas.Top="400" Width="600" Height="200" Fill="ForestGreen" EffectiveViewportChanged="Rectangle_EffectiveViewportChanged" Stroke="Magenta" StrokeThickness="5" />
                 <Rectangle Canvas.Top="600" Width="200" Height="200" Fill="Red" />
                 <Rectangle Canvas.Top="800" Width="200" Height="200" Fill="Khaki" />
-                <Rectangle Canvas.Top="1000" Width="200" Height="200" Fill="Aquamarine" />
-                <core:MeasureArrangeControl />
-            </StackPanel>
+        <Rectangle Canvas.Top="1000" Width="200" Height="200" Fill="Aquamarine" />
+      </StackPanel>
         </ScrollView>
 
         <TextBlock x:Name="PART_StatusText" Grid.Row="1" />

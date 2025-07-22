@@ -4,7 +4,6 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <NavigationView SelectionChanged="NavigationView_SelectionChanged">
     <NavigationView.MenuItems>
-      <NavigationViewItem Content="MemoryLeakTest" IsSelected="True" />
       <NavigationViewItem Content="FocusTest" />
       <NavigationViewItem Content="HotkeyTest" />
       <NavigationViewItem Content="ImageTest" />
