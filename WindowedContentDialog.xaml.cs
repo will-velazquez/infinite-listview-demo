@@ -282,6 +282,11 @@ sealed partial class WindowedContentDialog : UserControl
             return;
         }
 
+        if (this._taskCompletionSource is null)
+        {
+            throw new NullReferenceException();
+        }
+
         ContentDialogButton defaultButton = this.DefaultButton;
 
         if (defaultButton != ContentDialogButton.None
@@ -506,16 +511,31 @@ sealed partial class WindowedContentDialog : UserControl
 
     private void PrimaryButton_Click(object sender, RoutedEventArgs e)
     {
+        if (this._taskCompletionSource is null)
+        {
+            throw new NullReferenceException();
+        }
+
         this._taskCompletionSource.SetResult(ContentDialogResult.Primary);
     }
 
     private void SecondaryButton_Click(object sender, RoutedEventArgs e)
     {
+        if (this._taskCompletionSource is null)
+        {
+            throw new NullReferenceException();
+        }
+
         this._taskCompletionSource.SetResult(ContentDialogResult.Secondary);
     }
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
+        if (this._taskCompletionSource is null)
+        {
+            throw new NullReferenceException();
+        }
+
         this._taskCompletionSource.SetResult(ContentDialogResult.None);
     }
 

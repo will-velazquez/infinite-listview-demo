@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using System;
 using System.Linq;
 using System.Net;
@@ -30,7 +30,7 @@ public sealed partial class App : Application
             Console.WriteLine($"foo");
             throw;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
         finally
