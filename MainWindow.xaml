@@ -6,14 +6,11 @@
     <NavigationView.MenuItems>
       <NavigationViewItem Content="FocusTest" />
       <NavigationViewItem Content="HotkeyTest" />
-      <NavigationViewItem Content="ImageTest" />
-      <NavigationViewItem Content="ItemsRepeaterBugTest" />
-      <NavigationViewItem Content="ParserLayoutTest1" />
-      <NavigationViewItem Content="ParserLayoutTest2" />
-      <NavigationViewItem Content="WindowTest" />
       <NavigationViewItem Content="ViewportTest" />
       <NavigationViewItem Content="RichEditBoxTest" />
+      <NavigationViewItem Content="ViewportTest" />
       <NavigationViewItem Content="WindowContentDialogTest" />
+      <NavigationViewItem Content="WindowTest" />
     </NavigationView.MenuItems>
     <Frame x:Name="ContentFrame" />
   </NavigationView>
