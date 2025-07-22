@@ -13,7 +13,6 @@
       <NavigationViewItem Content="WindowTest" />
       <NavigationViewItem Content="ViewportTest" />
       <NavigationViewItem Content="RichEditBoxTest" />
-      <NavigationViewItem Content="SegmentedCrashTest" />
       <NavigationViewItem Content="WindowContentDialogTest" />
     </NavigationView.MenuItems>
     <Frame x:Name="ContentFrame" />
