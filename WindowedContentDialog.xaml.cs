@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics;
 
-namespace Fantastical.App.Components.Dialogs;
+namespace Fantastical.App.Dialogs;
 
 public sealed class WindowedContentDialogButtonClickDeferral(Action complete)
 {
@@ -468,6 +468,11 @@ sealed partial class WindowedContentDialog : UserControl
         AppWindow appWindow = AppWindow.GetFromWindowId(ownerWindowId);
 
         return await this.ShowAsync(appWindow, modal).ConfigureAwait(false);
+    }
+
+    public async Task<ContentDialogResult> ShowAsync(XamlRoot xamlRoot, bool modal)
+    {
+        return await this.ShowAsync(xamlRoot.ContentIslandEnvironment.AppWindowId, modal).ConfigureAwait(false);
     }
 
     public async Task<ContentDialogResult> ShowAsync(Window window, bool modal)
