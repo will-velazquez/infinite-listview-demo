@@ -1,0 +1,52 @@
+<Page
+    x:Class="Fantastical.App.Pages.RichEditBoxTest"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid
+        RowSpacing="7"
+        ColumnSpacing="7">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            x:Name="PART_Status"
+            Grid.Row="0"
+            Grid.Column="0">
+            <TextBlock.Foreground>
+                <SolidColorBrush x:Name="PART_StatusBrush" />
+            </TextBlock.Foreground>
+        </TextBlock>
+
+        <Button
+            x:Name="PART_URLifyButton"
+            Grid.Row="1"
+            Grid.Column="0"
+            Click="PART_URLifyButton_Click"
+            Content="Linkify"/>
+
+        <TextBlock
+            x:Name="PART_BareText"
+            Grid.Row="2"
+            Grid.Column="1"
+            Foreground="{ThemeResource TextFillColorDisabledBrush}"/>
+
+        <RichEditBox
+            x:Name="PART_RichEditBox"
+            Grid.Row="2"
+            Grid.Column="0"
+            SelectionFlyout="{x:Null}"
+            ContextFlyout="{x:Null}"
+            SelectionChanged="PART_RichEditBox_SelectionChanged"
+            SelectionChanging="PART_RichEditBox_SelectionChanging"
+            TextChanging="PART_RichEditBox_TextChanging"
+            TextChanged="PART_RichEditBox_TextChanged"
+            LostFocus="PART_RichEditBox_LostFocus" />
+    </Grid>
+</Page>

@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:toolkit="using:CommunityToolkit.WinUI"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:local="using:Fantastical.Core">
+    xmlns:local="using:Fantastical.Core"
+    x:Name="foo">
     <FrameworkElement.Resources>
         <Style TargetType="controls:Segmented">
             <Setter Property="ItemsPanel">
@@ -20,6 +21,13 @@
         </Style>
     </FrameworkElement.Resources>
     <StackPanel Orientation="Vertical">
+        <ItemsRepeater ItemsSource="{x:Bind Numbers}">
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="x:Int32">
+                    <TextBlock Foreground="{Binding Color, ElementName=.}" Text="{x:Bind}" />
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
         <controls:Segmented
                 SelectionMode="Single"
                 SelectedIndex="0">

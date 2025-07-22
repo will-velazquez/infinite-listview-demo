@@ -1,0 +1,17 @@
+<UserControl
+  x:Class="Fantastical.App.Pages.MemoryLeakTestControl2"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:Fantastical.App.Pages">
+
+  <StackPanel>
+    <TextBlock Text="{x:Bind ClickCount, Mode=OneWay}" />
+    <Button
+      Content="My Click count"
+      Click="Button_Click" />
+
+    <TextBlock Text="The other one:" />
+    <local:MemoryLeakTestControl3
+      ClickCountChanged="MemoryLeakTestControl3_ClickCountChanged"
+      />
+  </StackPanel>
+</UserControl>

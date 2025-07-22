@@ -5,9 +5,10 @@
     <StackPanel Orientation="Vertical">
         <Button Content="Show Dialog" Click="ShowDialog_Click"/>
         <Button Content="Show Built-in Dialog" Click="ShowBuiltinDialog_Click"/>
+        <CheckBox x:Name="Modal" Content="Modal" Checked="Modal_Checked" Unchecked="Modal_Unchecked" />
         <CheckBox x:Name="SetOwnerWindow" Content="Set Owner Window"   />
         <TextBox x:Name="Title" Header="Title" Text="ContentDialogTest" />
-        <TextBox x:Name="Content" Header="Content" Text="Sample dialog test content" AcceptsReturn="True" MinHeight="100" />
+        <TextBox x:Name="DialogContent" Header="Content" Text="Sample dialog test content" AcceptsReturn="True" MinHeight="100" />
         <TextBox x:Name="PrimaryButtonText" Header="Primary Button Text" Text="Primary" />
         <CheckBox x:Name="IsPrimaryButtonEnabled" Content="Is Primary Button Enabled?" IsChecked="True" />
         <TextBox x:Name="SecondaryButtonText" Header="Secondary Button Text" Text="Secondary" />

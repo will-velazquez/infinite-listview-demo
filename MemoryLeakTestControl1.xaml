@@ -1,0 +1,20 @@
+<local:MemoryLeakTestControl
+  x:Class="Fantastical.App.Pages.MemoryLeakTestControl1"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="using:Fantastical.Core">
+  <StackPanel>
+    <TextBlock>
+      <Run Text="Shared click count:" />
+      <Run Text="{x:Bind local:AppTheme.Current.SharedClickCount, Mode=OneWay}" />
+    </TextBlock>
+    <HyperlinkButton Click="CheckAvailability_Click" Visibility="{x:Bind GetMyVisibilityBasedOnClickCount(local:AppTheme.Current.SharedClickCount), Mode=OneWay}">
+      <StackPanel Orientation="Horizontal">
+        <BitmapIcon UriSource="{x:Bind local:AppTheme.Current.Logo, Mode=OneWay}" Foreground="{ThemeResource AccentFillColorDefaultBrush}" />
+      </StackPanel>
+    </HyperlinkButton>
+    <TextBlock Text="{x:Bind ClickCount, Mode=OneWay}" />
+    <Button
+      Click="Button_Click" />
+  </StackPanel>
+</local:MemoryLeakTestControl>

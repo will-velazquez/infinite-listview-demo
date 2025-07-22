@@ -4,7 +4,7 @@ namespace Fantastical.App.Pages;
 
 internal sealed partial class _BlankPage : Page
 {
-	public _BlankPage()
+    public _BlankPage()
     {
         this.InitializeComponent();
     }

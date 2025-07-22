@@ -8,6 +8,8 @@ namespace Fantastical.App.Pages;
 
 internal sealed partial class WindowContentDialogTest : Page
 {
+    private bool _prevModalValue;
+
     public WindowContentDialogTest()
     {
         this.InitializeComponent();
@@ -21,7 +23,7 @@ internal sealed partial class WindowContentDialogTest : Page
         };
 
         contentDialog.Title = this.Title.Text;
-        contentDialog.DialogContent = this.Content.Text;
+        contentDialog.DialogContent = this.DialogContent.Text;
         contentDialog.PrimaryButtonText = this.PrimaryButtonText.Text;
         contentDialog.IsPrimaryButtonEnabled = this.IsPrimaryButtonEnabled.IsChecked ?? false;
         contentDialog.SecondaryButtonText = this.SecondaryButtonText.Text;
@@ -38,8 +40,9 @@ internal sealed partial class WindowContentDialogTest : Page
         if (this.SetOwnerWindow.IsChecked ?? false)
         {
             WindowId ownerWindowId = this.XamlRoot.ContentIslandEnvironment.AppWindowId;
+            bool modal = this.Modal.IsChecked ?? false;
 
-            _ = contentDialog.ShowAsync(ownerWindowId);
+            _ = contentDialog.ShowAsync(ownerWindowId, modal);
         }
         else
         {
@@ -78,7 +81,7 @@ internal sealed partial class WindowContentDialogTest : Page
         };
 
         contentDialog.Title = this.Title.Text;
-        contentDialog.Content = this.Content.Text;
+        contentDialog.Content = this.DialogContent.Text;
         contentDialog.PrimaryButtonText = this.PrimaryButtonText.Text;
         contentDialog.IsPrimaryButtonEnabled = this.IsPrimaryButtonEnabled.IsChecked ?? false;
         contentDialog.SecondaryButtonText = this.SecondaryButtonText.Text;
@@ -98,5 +101,18 @@ internal sealed partial class WindowContentDialogTest : Page
         {
             this._builtinContentDialog = null;
         });
+    }
+
+    private void Modal_Checked(object sender, RoutedEventArgs e)
+    {
+        this._prevModalValue = this.SetOwnerWindow.IsChecked ?? false;
+        this.SetOwnerWindow.IsEnabled = false;
+        this.SetOwnerWindow.IsChecked = true;
+    }
+
+    private void Modal_Unchecked(object sender, RoutedEventArgs e)
+    {
+        this.SetOwnerWindow.IsEnabled = true;
+        this.SetOwnerWindow.IsChecked = this._prevModalValue;
     }
 }

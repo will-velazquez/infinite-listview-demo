@@ -198,15 +198,15 @@ sealed partial class WindowedContentDialog : UserControl
         SetWindowLong(windowHwnd, GWL_HWNDPARENT, ownerHwnd);
     }
 
-    private static OverlappedPresenter CreatePresenter()
+    private static OverlappedPresenter CreatePresenter(bool modal)
     {
         OverlappedPresenter overlappedPresenter = OverlappedPresenter.Create();
 
-        overlappedPresenter.SetBorderAndTitleBar(false, false);
+        overlappedPresenter.SetBorderAndTitleBar(true, true);
         overlappedPresenter.IsAlwaysOnTop = false;
         overlappedPresenter.IsMaximizable = false;
         overlappedPresenter.IsMinimizable = false;
-        overlappedPresenter.IsModal = false;
+        overlappedPresenter.IsModal = modal;
         overlappedPresenter.IsResizable = false;
 
         return overlappedPresenter;
@@ -215,7 +215,7 @@ sealed partial class WindowedContentDialog : UserControl
     private TaskCompletionSource<ContentDialogResult>? _taskCompletionSource;
     private Window? _window;
 
-    private async Task<ContentDialogResult> ShowInternalAsync(WindowId? ownerWindowId, Point origin)
+    private async Task<ContentDialogResult> ShowInternalAsync(WindowId? ownerWindowId, bool modal, PointInt32 origin)
     {
         if (this._taskCompletionSource is not null)
         {
@@ -226,20 +226,20 @@ sealed partial class WindowedContentDialog : UserControl
 
         this._window = new Window();
 
-        this._window.AppWindow.SetPresenter(CreatePresenter());
-
         if (ownerWindowId.HasValue)
         {
             SetWindowOwner(this._window, ownerWindowId.Value);
         }
 
-        // this._window.SystemBackdrop = new DesktopAcrylicBackdrop(); // new MicaBackdrop() { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base };
-        this._window.AppWindow.Move(new PointInt32((int)origin.X, (int)origin.Y));
+        this._window.AppWindow.SetPresenter(CreatePresenter(modal));
+        this._window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+        this._window.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
+        this._window.Content = this;
+
+        this._window.AppWindow.Move(origin);
 
         this.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-        this.InvalidateArrange();
-
-        this._window.Content = this;
+        this.InvalidateArrange();        
 
         this._window.SizeChanged += this.Window_SizeChanged;
         this._window.Closed += this.Window_Closed;
@@ -248,12 +248,25 @@ sealed partial class WindowedContentDialog : UserControl
 
         this._window.Activate();
 
+        if (modal && ownerWindowId.HasValue)
+        {
+            nint hwnd = Win32Interop.GetWindowFromWindowId(ownerWindowId.Value);
+            EnableWindow(hwnd, false);
+        }
+
         ContentDialogResult contentDialogResult = await this._taskCompletionSource.Task;
 
         this._taskCompletionSource = null;
 
         this._window.SizeChanged -= this.Window_SizeChanged;
         this._window.Closed -= this.Window_Closed;
+
+        if (modal && ownerWindowId.HasValue)
+        {
+            nint hwnd = Win32Interop.GetWindowFromWindowId(ownerWindowId.Value);
+            EnableWindow(hwnd, true);
+        }
+
         this._window.Close();
 
         return contentDialogResult;
@@ -304,32 +317,43 @@ sealed partial class WindowedContentDialog : UserControl
 
     public async Task<ContentDialogResult> ShowAsync()
     {
-        RectInt32 outerBounds = DisplayArea.Primary.OuterBounds;
-        Point origin = new Point(outerBounds.X + outerBounds.Width / 2, outerBounds.Y + outerBounds.Height / 2);
+        DisplayArea displayArea;
 
-        return await this.ShowInternalAsync(null, origin).ConfigureAwait(false);
+        if (GetCursorPos(out PointInt32 point))
+        {
+            displayArea = DisplayArea.GetFromPoint(point, DisplayAreaFallback.Nearest);
+        }
+        else
+        {
+            displayArea = DisplayArea.Primary;
+        }
+
+        RectInt32 outerBounds = displayArea.OuterBounds;
+        PointInt32 origin = new PointInt32(outerBounds.X + outerBounds.Width / 2, outerBounds.Y + outerBounds.Height / 2);
+
+        return await this.ShowInternalAsync(null, false, origin).ConfigureAwait(false);
     }
 
-    public async Task<ContentDialogResult> ShowAsync(AppWindow appWindow)
+    public async Task<ContentDialogResult> ShowAsync(AppWindow appWindow, bool modal)
     {
         WindowId ownerWindowId = appWindow.Id;
         PointInt32 position = appWindow.Position;
         SizeInt32 sizeInt32 = appWindow.Size;
-        Point origin = new Point(position.X + sizeInt32.Width / 2, position.Y + sizeInt32.Height / 2);
+        PointInt32 origin = new PointInt32(position.X + sizeInt32.Width / 2, position.Y + sizeInt32.Height / 2);
 
-        return await this.ShowInternalAsync(ownerWindowId, origin).ConfigureAwait(false);
+        return await this.ShowInternalAsync(ownerWindowId, modal, origin).ConfigureAwait(false);
     }
 
-    public async Task<ContentDialogResult> ShowAsync(WindowId ownerWindowId)
+    public async Task<ContentDialogResult> ShowAsync(WindowId ownerWindowId, bool modal)
     {
         AppWindow appWindow = AppWindow.GetFromWindowId(ownerWindowId);
 
-        return await this.ShowAsync(appWindow).ConfigureAwait(false);
+        return await this.ShowAsync(appWindow, modal).ConfigureAwait(false);
     }
 
-    public async Task<ContentDialogResult> ShowAsync(Window window)
+    public async Task<ContentDialogResult> ShowAsync(Window window, bool modal)
     {
-        return await this.ShowAsync(window.AppWindow).ConfigureAwait(false);
+        return await this.ShowAsync(window.AppWindow, modal).ConfigureAwait(false);
     }
 
     public void Hide()
@@ -461,6 +485,17 @@ sealed partial class WindowedContentDialog : UserControl
     {
     }
 
+    private void PART_Title_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (this._window is not null)
+        {
+            Rect r = this.PART_Title.TransformToVisual(this._window.Content).TransformBounds(new Rect(0, 0, this.PART_Title.ActualWidth, this.PART_Title.ActualHeight));
+            RectInt32 ri32 = new RectInt32(0, 0, this._window.AppWindow.Size.Width, (int)r.Y + (int)r.Height);
+
+            this._window.AppWindow.TitleBar.SetDragRectangles([ri32]);
+        }
+    }
+
     private void Window_Closed(object sender, WindowEventArgs args)
     {
         if (this._taskCompletionSource is not null)
@@ -486,6 +521,9 @@ sealed partial class WindowedContentDialog : UserControl
 
     [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     private static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
+
+    [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    private static extern bool GetCursorPos(out PointInt32 pt);
 
     private const int GWL_HWNDPARENT = (-8);
 

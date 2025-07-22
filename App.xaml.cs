@@ -1,5 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using WinRT;
 
 namespace Fantastical.App;
@@ -17,6 +20,22 @@ public sealed partial class App : Application
     [STAThread]
     static void Main()
     {
+
+        try
+        {
+            throw new ArgumentException($"");
+        }
+        catch (ArgumentException)
+        {
+            Console.WriteLine($"foo");
+            throw;
+        }
+        catch (Exception ex)
+        {
+        }
+        finally
+        {
+        }
         XamlCheckProcessRequirements();
 
         ComWrappersSupport.InitializeComWrappers();

@@ -1,0 +1,33 @@
+<Page
+    x:Class="Fantastical.App.Pages.FocusTest"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <RichEditBox
+            x:Name="PART_ParserBox"
+            Grid.Column="0"
+            Grid.Row="0"
+            LosingFocus="RichEditBox_LosingFocus"
+            LostFocus="RichEditBox_LostFocus"
+            Background="Magenta" />
+        <Button
+            Content="+"
+            Grid.Column="1"
+            Grid.Row="0"
+            Click="Button_Click" />
+        <TextBox
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Grid.Row="1" />
+    </Grid>
+</Page>

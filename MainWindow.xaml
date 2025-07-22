@@ -1,15 +1,22 @@
 <Window
-    x:Class="Fantastical.App.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <NavigationView SelectionChanged="NavigationView_SelectionChanged">
-        <NavigationView.MenuItems>
-            <NavigationViewItem Content="ImageTest" />
-            <NavigationViewItem Content="WindowTest" />
-            <NavigationViewItem Content="ViewportTest" />
-            <NavigationViewItem Content="SegmentedCrashTest" />
-            <NavigationViewItem IsSelected="True" Content="WindowContentDialogTest" />
-        </NavigationView.MenuItems>
-        <Frame x:Name="ContentFrame" />
-    </NavigationView>
+  x:Class="Fantastical.App.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <NavigationView SelectionChanged="NavigationView_SelectionChanged">
+    <NavigationView.MenuItems>
+      <NavigationViewItem Content="MemoryLeakTest" IsSelected="True" />
+      <NavigationViewItem Content="FocusTest" />
+      <NavigationViewItem Content="HotkeyTest" />
+      <NavigationViewItem Content="ImageTest" />
+      <NavigationViewItem Content="ItemsRepeaterBugTest" />
+      <NavigationViewItem Content="ParserLayoutTest1" />
+      <NavigationViewItem Content="ParserLayoutTest2" />
+      <NavigationViewItem Content="WindowTest" />
+      <NavigationViewItem Content="ViewportTest" />
+      <NavigationViewItem Content="RichEditBoxTest" />
+      <NavigationViewItem Content="SegmentedCrashTest" />
+      <NavigationViewItem Content="WindowContentDialogTest" />
+    </NavigationView.MenuItems>
+    <Frame x:Name="ContentFrame" />
+  </NavigationView>
 </Window>

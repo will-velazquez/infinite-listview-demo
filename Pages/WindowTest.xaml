@@ -21,7 +21,7 @@
                     <RadioButton Content="false" />
                     <RadioButton Content="true" />
                 </RadioButtons>
-                <RadioButtons x:Name="Button1_Option_HasTitleBar" Header="HasTitleBar" SelectedIndex="0" MaxColumns="10">
+                <RadioButtons x:Name="Button1_Option_HasTitleBar" Header="HasTitleBar" SelectedIndex="0" MaxColumns="10" SelectionChanged="Button1_Option_HasTitleBar_SelectionChanged">
                     <RadioButton x:Name="Button1_Option_DefaultButton_HasTitleBar" Content="default" />
                     <RadioButton Content="false" />
                     <RadioButton Content="true" />
