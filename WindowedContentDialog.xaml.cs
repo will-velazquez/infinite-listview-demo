@@ -294,7 +294,7 @@ sealed partial class WindowedContentDialog : UserControl
 
         this._window.AppWindow.Move(origin);
 
-        this.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        this.Measure(new Size(this.Container.MaxWidth, this.Container.MaxHeight));
         this.InvalidateArrange();
 
         this._window.SizeChanged += this.Window_SizeChanged;
@@ -550,7 +550,7 @@ sealed partial class WindowedContentDialog : UserControl
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        Size desiredSize = base.MeasureOverride(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        Size desiredSize = base.MeasureOverride(new Size(this.Container.MaxWidth, this.Container.MaxHeight));
 
         if (this._window is { AppWindow: AppWindow appWindow })
         {
