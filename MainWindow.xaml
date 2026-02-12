@@ -9,7 +9,6 @@
             <NavigationViewItem Content="ViewportTest" />
             <NavigationViewItem Content="RichEditBoxTest" />
             <NavigationViewItem Content="ViewportTest" />
-            <NavigationViewItem Content="WindowContentDialogTest" />
             <NavigationViewItem Content="WindowTest" />
         </NavigationView.MenuItems>
         <Frame x:Name="ContentFrame" />
