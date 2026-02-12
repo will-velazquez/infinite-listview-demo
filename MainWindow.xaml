@@ -1,17 +1,17 @@
 <Window
-  x:Class="Fantastical.App.MainWindow"
-  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <NavigationView SelectionChanged="NavigationView_SelectionChanged">
-    <NavigationView.MenuItems>
-      <NavigationViewItem Content="FocusTest" />
-      <NavigationViewItem Content="HotkeyTest" />
-      <NavigationViewItem Content="ViewportTest" />
-      <NavigationViewItem Content="RichEditBoxTest" />
-      <NavigationViewItem Content="ViewportTest" />
-      <NavigationViewItem Content="WindowContentDialogTest" />
-      <NavigationViewItem Content="WindowTest" />
-    </NavigationView.MenuItems>
-    <Frame x:Name="ContentFrame" />
-  </NavigationView>
+    x:Class="Fantastical.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <NavigationView SelectionChanged="NavigationView_SelectionChanged">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="FocusTest" />
+            <NavigationViewItem Content="HotkeyTest" />
+            <NavigationViewItem Content="ViewportTest" />
+            <NavigationViewItem Content="RichEditBoxTest" />
+            <NavigationViewItem Content="ViewportTest" />
+            <NavigationViewItem Content="WindowContentDialogTest" />
+            <NavigationViewItem Content="WindowTest" />
+        </NavigationView.MenuItems>
+        <Frame x:Name="ContentFrame" />
+    </NavigationView>
 </Window>
